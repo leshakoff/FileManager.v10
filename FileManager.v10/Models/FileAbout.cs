@@ -12,7 +12,7 @@ namespace FileManager.v10
         public DateTime CreationTime { get; set; }
         public string Extension { get; set; }
         public DateTime LastWrite { get; set; }
-        public long Size { get; set; }
+        public string Size { get; set; }
         public ImageSource Image { get; set; }
 
         public string FullPath { get; set; }

@@ -110,7 +110,8 @@ namespace FileManager.v10
                             {
                                 Name = di.Name,
                                 CreationTime = di.CreationTime,
-                                Extension = di.Extension,
+                                Extension = "Папка",
+                                Size = GetSize(DirSize(di)),
                                 LastWrite = di.LastWriteTime,
                                 FullPath = di.FullName,
                                 Image = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close)
@@ -133,6 +134,7 @@ namespace FileManager.v10
                                 CreationTime = fi.CreationTime,
                                 Extension = fi.Extension,
                                 LastWrite = fi.LastWriteTime,
+                                Size = GetSize(fi.Length),
                                 FullPath = fi.FullName,
                                 Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
                             };
@@ -155,7 +157,8 @@ namespace FileManager.v10
                             CreationTime = fi.CreationTime,
                             Extension = fi.Extension,
                             LastWrite = fi.LastWriteTime,
-                            FullPath = fi.FullName
+                            FullPath = fi.FullName,
+                            Size = GetSize(fi.Length)
                         };
 
                         allFilesAndDirectories.Add(ab);
@@ -232,11 +235,22 @@ namespace FileManager.v10
             aboutAll = allFilesAndDirectories;
 
         }
+
+
+        public static long DirSize(DirectoryInfo dir)
+        {
+            return dir.GetFiles().Sum(fi => fi.Length) +
+                   dir.GetDirectories().Sum(di => DirSize(di));
+        }
+
+        public static string GetSize(long size)
+        {
+            var unit = 1024;
+            if (size < unit) { return $"{size} B"; }
+
+            var exp = (int)(Math.Log(size) / Math.Log(unit));
+            return $"{size / Math.Pow(unit, exp):F2} {("KMGTPE")[exp - 1]}B";
+        }
     }
-
-
-
-
-
 
 }
