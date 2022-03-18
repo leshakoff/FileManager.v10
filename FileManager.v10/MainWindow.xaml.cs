@@ -176,8 +176,6 @@ namespace FileManager.v10
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //string search = $"*{BoopIsto.Text}*";
-            //Boop.Text = $"Выполняется поиск по запросу: {BoopIsto.Text}...";
             WorkerParam wp = new WorkerParam(BoopIsto.Text);
             worker.RunWorkerAsync(wp);
             Boop.Text = $"Выполняется поиск по запросу: {BoopIsto.Text}...";
