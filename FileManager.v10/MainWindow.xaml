@@ -1,0 +1,56 @@
+﻿<Window x:Class="FileManager.v10.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:classes="clr-namespace:FileManager.v10.Models"
+        xmlns:local="clr-namespace:FileManager.v10"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <StackPanel Orientation="Horizontal">
+        <TreeView Name="treeView" Margin="5" MouseDoubleClick="ItemsControl_MouseDoubleClick" MouseLeftButtonUp="treeView_MouseLeftButtonDown">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
+                        <TextBlock Text="{Binding Path=FileSystemInfo.Name}"></TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+
+        
+        <StackPanel>
+            <TextBox Name="BoopIsto" Width="300" />
+            <TextBlock x:Name="Boop" />
+            <Button Content="SEARCH!" Click="Button_Click" />
+            <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" >
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Image}" Stretch="None" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Расширение" Binding="{Binding Extension}" />
+                    <DataGridTextColumn Header="Размер" Binding="{Binding Size}" />
+                    <DataGridTextColumn Header="Дата создания" Binding="{Binding CreationTime, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}" />
+                    <DataGridTextColumn Header="Последнее изменение" Binding="{Binding LastWrite, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}" />
+                   
+
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+        
+        
+    </StackPanel>
+    
+</Window>
