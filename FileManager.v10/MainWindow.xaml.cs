@@ -235,10 +235,13 @@ namespace FileManager.v10
         }
 
 
+        // когда натыкаемся на папки, к которым доступ закрыт, 
+        // вылетает исключение. исправить 
         public static long DirSize(DirectoryInfo dir)
         {
-            return dir.GetFiles().Sum(fi => fi.Length) +
-                   dir.GetDirectories().Sum(di => DirSize(di));
+
+                return dir.GetFiles().Sum(fi => fi.Length) +
+                       dir.GetDirectories().Sum(di => DirSize(di));
         }
 
         public static string GetSize(long size)

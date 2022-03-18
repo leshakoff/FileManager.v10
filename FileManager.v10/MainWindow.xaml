@@ -30,7 +30,7 @@
             <TextBox Name="BoopIsto" Width="300" />
             <TextBlock x:Name="Boop" />
             <Button Content="SEARCH!" Click="Button_Click" />
-            <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" >
+            <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" HeadersVisibility="None">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
