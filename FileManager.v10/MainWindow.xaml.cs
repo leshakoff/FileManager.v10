@@ -51,8 +51,19 @@ namespace FileManager.v10
 
             worker.DoWork += new DoWorkEventHandler(Search);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SerchCompleted);
+            //worker.ProgressChanged += new ProgressChangedEventHandler(Bgworker_ProgressChanged);
+            worker.WorkerReportsProgress = true;
+
+            
 
         }
+
+        private void Bgworker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //Boop.Text = e.ProgressPercentage.ToString();
+            pbStatus.Value = e.ProgressPercentage;
+        }
+
 
         private void ItemsControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -106,6 +117,9 @@ namespace FileManager.v10
                         if (!object.Equals((di.Attributes & FileAttributes.System), FileAttributes.System) &&
                             !object.Equals((di.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
                         {
+                            
+                            //ImageSource img = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close).Clone();
+
                             FileAbout fi = new FileAbout
                             {
                                 Name = di.Name,
@@ -128,6 +142,7 @@ namespace FileManager.v10
                         if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
                             !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
                         {
+                            /*FileManager.v10.Models.FileManager.GetImageSource(fi.FullName).Freeze()*/;
                             FileAbout fiAbout = new FileAbout
                             {
                                 Name = fi.Name,
@@ -151,6 +166,7 @@ namespace FileManager.v10
                     if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
                         !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
                     {
+                        
                         FileAbout ab = new FileAbout
                         {
                             Name = fi.Name,
@@ -158,7 +174,8 @@ namespace FileManager.v10
                             Extension = fi.Extension,
                             LastWrite = fi.LastWriteTime,
                             FullPath = fi.FullName,
-                            Size = GetSize(fi.Length)
+                            Size = GetSize(fi.Length),
+                            Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
                         };
 
                         allFilesAndDirectories.Add(ab);
@@ -179,27 +196,34 @@ namespace FileManager.v10
             WorkerParam wp = new WorkerParam(BoopIsto.Text);
             worker.RunWorkerAsync(wp);
             Boop.Text = $"Выполняется поиск по запросу: {BoopIsto.Text}...";
+            pbStatus.IsIndeterminate = true;
         }
 
         private void SerchCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             dataGrid.ItemsSource = aboutAll;
             Boop.Text = "Поиск завершён!";
+            pbStatus.IsIndeterminate = false;
         }
 
         private void Search(object sender, DoWorkEventArgs e)
         {
+            
+            BackgroundWorker bg = sender as BackgroundWorker;
             WorkerParam wp = (WorkerParam)e.Argument;
             string search = $"*{wp.param}*";
 
             List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
             Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(@"C:\", search);
+            
             Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(@"C:\", search);
+
 
             foreach (var d in dirs.Result)
             {
-
+                ImageSource img = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close);
+                img.Freeze();
 
                 FileAbout fi = new FileAbout
                 {
@@ -208,15 +232,15 @@ namespace FileManager.v10
                     Extension = d.Extension,
                     LastWrite = d.LastWriteTime,
                     FullPath = d.FullName,
-                    Image = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close)
+                    Image = img
                 };
                 allFilesAndDirectories.Add(fi);
             }
 
             foreach (var f in task.Result)
             {
-
-
+                ImageSource img = FileManager.v10.Models.FileManager.GetImageSource(f.FullName);
+                img.Freeze();
                 FileAbout fiAbout = new FileAbout
                 {
                     Name = f.Name,
@@ -224,13 +248,15 @@ namespace FileManager.v10
                     Extension = f.Extension,
                     LastWrite = f.LastWriteTime,
                     FullPath = f.FullName,
-                    Image = FileManager.v10.Models.FileManager.GetImageSource(f.FullName)
+                    Image = img
                 };
                 allFilesAndDirectories.Add(fiAbout);
 
             }
+            bg.ReportProgress(99);
 
             aboutAll = allFilesAndDirectories;
+            bg.ReportProgress(100);
 
         }
 
