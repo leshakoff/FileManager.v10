@@ -222,6 +222,10 @@ namespace FileManager.v10
 
             foreach (var d in dirs.Result)
             {
+                // img.Freeze мы используем для того, чтобы не возникало исключений. 
+                // исключения ругаются на то, что мы получаем картинку в одном потоке, 
+                // и пытаемся её использовать в другом; в нашем случае, backgroundworker
+                // пытается получить картинку из основного потока, и вылетает исключение. 
                 ImageSource img = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close);
                 img.Freeze();
 
