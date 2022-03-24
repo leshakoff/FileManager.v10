@@ -42,13 +42,12 @@ namespace FileManager.v10
             var drives = DriveInfo.GetDrives();
             foreach (var drive in drives)
             {
-                if(drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
+                if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
             }
             worker = new BackgroundWorker();
 
             worker.DoWork += new DoWorkEventHandler(Search);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SerchCompleted);
-            //worker.WorkerReportsProgress = true;
 
         }
 
@@ -75,11 +74,11 @@ namespace FileManager.v10
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             btnClick.IsEnabled = false;
-                WorkerParam wp = new WorkerParam(BoopIsto.Text);
-                worker.RunWorkerAsync(wp);
-                Boop.Text = $"Выполняется поиск по запросу: {BoopIsto.Text}...";
-                pbStatus.IsIndeterminate = true;
-            
+            WorkerParam wp = new WorkerParam(BoopIsto.Text);
+            worker.RunWorkerAsync(wp);
+            Boop.Text = $"Выполняется поиск по запросу: {BoopIsto.Text}...";
+            pbStatus.IsIndeterminate = true;
+
         }
 
         private void SerchCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -91,7 +90,7 @@ namespace FileManager.v10
 
         private void Search(object sender, DoWorkEventArgs e)
         {
-            
+
             BackgroundWorker bg = sender as BackgroundWorker;
             WorkerParam wp = (WorkerParam)e.Argument;
             string search = $"*{wp.param}*";
@@ -99,7 +98,7 @@ namespace FileManager.v10
             List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
             Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(@"C:\", search);
-            
+
             Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(@"C:\", search);
 
 
@@ -146,7 +145,8 @@ namespace FileManager.v10
 
         private void BoopIsto_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(BoopIsto.Text) && !String.IsNullOrWhiteSpace(BoopIsto.Text))
+            if (!String.IsNullOrEmpty(BoopIsto.Text) && !String.IsNullOrWhiteSpace(BoopIsto.Text)
+                && !worker.IsBusy)
             {
                 btnClick.IsEnabled = true;
             }
