@@ -38,9 +38,9 @@
             Name="pbStatus" />
             
             
-            <TextBox Name="BoopIsto" Width="300" />
+            <TextBox Name="BoopIsto" Width="300" TextChanged="BoopIsto_TextChanged" />
             <TextBlock x:Name="Boop" />
-            <Button Content="SEARCH!" Click="Button_Click" Name="btnClick" />
+            <Button Content="SEARCH!" Click="Button_Click" Name="btnClick" IsEnabled="False"/>
             <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" HeadersVisibility="None">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">

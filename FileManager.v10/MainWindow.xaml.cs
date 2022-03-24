@@ -74,13 +74,11 @@ namespace FileManager.v10
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(BoopIsto.Text) || !String.IsNullOrWhiteSpace(BoopIsto.Text))
-            {
+            btnClick.IsEnabled = false;
                 WorkerParam wp = new WorkerParam(BoopIsto.Text);
                 worker.RunWorkerAsync(wp);
                 Boop.Text = $"Выполняется поиск по запросу: {BoopIsto.Text}...";
                 pbStatus.IsIndeterminate = true;
-            }
             
         }
 
@@ -146,9 +144,13 @@ namespace FileManager.v10
 
         }
 
-
-
-
+        private void BoopIsto_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(BoopIsto.Text) && !String.IsNullOrWhiteSpace(BoopIsto.Text))
+            {
+                btnClick.IsEnabled = true;
+            }
+        }
     }
 
 }
