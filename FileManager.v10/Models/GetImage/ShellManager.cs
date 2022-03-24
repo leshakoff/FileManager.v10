@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FileManager.v10.Models;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace FileManager.v10.Models
+namespace FileManager.v10
 {
     public class ShellManager
     {

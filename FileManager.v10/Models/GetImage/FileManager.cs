@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static FileManager.v10.Models.ShellManager;
+using static FileManager.v10.ShellManager;
 
 namespace FileManager.v10.Models
 {
-    public static class FolderManager
+    public static class FileManager
     {
-        public static ImageSource GetImageSource(string directory, ItemState folderType)
+        public static ImageSource GetImageSource(string filename)
         {
             try
             {
-                return FolderManager.GetImageSource(directory, new Size(16, 16), folderType);
+                return FileManager.GetImageSource(filename, new Size(16, 16));
             }
             catch
             {
@@ -23,11 +24,12 @@ namespace FileManager.v10.Models
             }
         }
 
-        public static ImageSource GetImageSource(string directory, Size size, ItemState folderType)
+        public static ImageSource GetImageSource(string filename, Size size)
         {
             try
             {
-                using (var icon = ShellManager.GetIcon(directory, ItemType.Folder, IconSize.Large, folderType))
+                using (var icon = ShellManager.GetIcon(Path.GetExtension(filename), 
+                    ItemType.File, IconSize.Small, ItemState.Undefined))
                 {
                     return Imaging.CreateBitmapSourceFromHIcon(icon.Handle, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight((int)size.Width, (int)size.Height));
                 }
@@ -38,5 +40,4 @@ namespace FileManager.v10.Models
             }
         }
     }
-
 }

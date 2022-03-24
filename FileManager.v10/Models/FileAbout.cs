@@ -14,7 +14,6 @@ namespace FileManager.v10
         public DateTime LastWrite { get; set; }
         public string Size { get; set; }
         public ImageSource Image { get; set; }
-
         public string FullPath { get; set; }
     }
 }

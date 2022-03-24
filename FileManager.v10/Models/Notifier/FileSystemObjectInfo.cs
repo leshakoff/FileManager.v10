@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
-using static FileManager.v10.Models.ShellManager;
+using static FileManager.v10.ShellManager;
 
 namespace FileManager.v10.Models
 {
