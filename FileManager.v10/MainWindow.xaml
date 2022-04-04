@@ -89,7 +89,7 @@
                       AutoGenerateColumns="False" 
                       IsReadOnly="True" 
                       Width="600" 
-                      Height="300">
+                      Height="300" >
 
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
