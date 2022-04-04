@@ -23,14 +23,21 @@ namespace FileManager.v10
 {
     public partial class MainWindow : Window
     {
+        private Thread _backgroundWorkerThread;
+        public TimeSpan stopwatch;
+        public long quantity;
+
+
         public List<FileAbout> aboutAll = new List<FileAbout>();
         public class WorkerParam
         {
             public string param;
+            public string sourcePath;
 
-            public WorkerParam(string p)
+            public WorkerParam(string p, string source)
             {
                 param = p;
+                sourcePath = source;
             }
         }
 
@@ -44,10 +51,12 @@ namespace FileManager.v10
             {
                 if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
             }
-            worker = new BackgroundWorker();
 
+
+            worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(Search);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SerchCompleted);
+            worker.WorkerSupportsCancellation = true;
 
         }
 
@@ -67,6 +76,8 @@ namespace FileManager.v10
             {
                 string path = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
                 dataGrid.ItemsSource = MainController.GetList(path);
+                if (dataGrid.Items.Count == 0)
+                    Boop.Text = "Ничего не найдено.";
             }
 
         }
@@ -74,82 +85,107 @@ namespace FileManager.v10
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             btnClick.IsEnabled = false;
-            WorkerParam wp = new WorkerParam(BoopIsto.Text);
+            cancelSearchButton.IsEnabled = true;
+            pbStatus.Visibility = Visibility.Visible;
+            WorkerParam wp = new WorkerParam(BoopIsto.Text, searchLocation.SelectedItem
+                .ToString()
+                .Replace("System.Windows.Controls.ComboBoxItem: ", ""));
             worker.RunWorkerAsync(wp);
-            Boop.Text = $"Выполняется поиск по запросу: {BoopIsto.Text}...";
+            Boop.Text = $"Выполняется поиск в {wp.sourcePath} по запросу: {BoopIsto.Text}...";
             pbStatus.IsIndeterminate = true;
 
         }
 
         private void SerchCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+
             dataGrid.ItemsSource = aboutAll;
-            Boop.Text = "Поиск завершён!";
+            if (dataGrid.Items.Count == 0)
+                Boop.Text = $"Упс... По вашему запросу ничего не найдено";
+            else
+            {
+                Boop.Text = $"Поиск завершён! \n" +
+                            $"Найдено: {quantity} файлов/директорий за " +
+                            $"{stopwatch.Hours} чч" +
+                            $":{stopwatch.Minutes} мм" +
+                            $":{stopwatch.Seconds} сс" +
+                            $":{stopwatch.Milliseconds} мс";
+            }
+
+
+
             pbStatus.IsIndeterminate = false;
+            pbStatus.Visibility = Visibility.Hidden;
         }
 
         private void Search(object sender, DoWorkEventArgs e)
         {
-
-            BackgroundWorker bg = sender as BackgroundWorker;
-            WorkerParam wp = (WorkerParam)e.Argument;
-            string search = $"*{wp.param}*";
-
-            List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
-
-            Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(@"C:\", search);
-
-            Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(@"C:\", search);
-
-
-            foreach (var d in dirs.Result)
+            try
             {
-                // img.Freeze мы используем для того, чтобы не возникало исключений. 
-                // исключения ругаются на то, что мы получаем картинку в одном потоке, 
-                // и пытаемся её использовать в другом; в нашем случае, backgroundworker
-                // пытается получить картинку из основного потока, и вылетает исключение. 
-                ImageSource img = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close);
-                img.Freeze();
+                _backgroundWorkerThread = Thread.CurrentThread;
 
-                FileAbout fi = new FileAbout
-                {
-                    Name = d.Name,
-                    CreationTime = d.CreationTime,
-                    Extension = d.Extension,
-                    LastWrite = d.LastWriteTime,
-                    FullPath = d.FullName,
-                    Image = img
-                };
-                allFilesAndDirectories.Add(fi);
+                Stopwatch sp = new Stopwatch();
+                sp.Start();
+                BackgroundWorker bg = sender as BackgroundWorker;
+                WorkerParam wp = (WorkerParam)e.Argument;
+                string search = $"*{wp.param}*";
+                string path = wp.sourcePath;
+
+
+                List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
+
+                Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(path, search);
+
+                Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(path, search);
+
+                aboutAll = MainController.GetList(dirs.Result, task.Result);
+
+                sp.Stop();
+                stopwatch = sp.Elapsed;
+                quantity = aboutAll.Count;
             }
-
-            foreach (var f in task.Result)
+            catch (ThreadInterruptedException)
             {
-                ImageSource img = FileManager.v10.Models.FileManager.GetImageSource(f.FullName);
-                img.Freeze();
-                FileAbout fiAbout = new FileAbout
-                {
-                    Name = f.Name,
-                    CreationTime = f.CreationTime,
-                    Extension = f.Extension,
-                    LastWrite = f.LastWriteTime,
-                    FullPath = f.FullName,
-                    Image = img
-                };
-                allFilesAndDirectories.Add(fiAbout);
-
+                
             }
-            aboutAll = allFilesAndDirectories;
 
         }
 
         private void BoopIsto_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(BoopIsto.Text) && !String.IsNullOrWhiteSpace(BoopIsto.Text)
+            if (!String.IsNullOrEmpty(BoopIsto.Text)
+                && !String.IsNullOrWhiteSpace(BoopIsto.Text)
                 && !worker.IsBusy)
             {
                 btnClick.IsEnabled = true;
+                cancelSearchButton.IsEnabled = true;
             }
+        }
+
+        private void searchLocation_DropDownOpened(object sender, EventArgs e)
+        {
+            if (treeView.SelectedItem != null)
+            {
+                currentFolder.Text = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+            }
+            else
+            {
+                currentFolder.Visibility = Visibility.Collapsed;
+            }
+
+        }
+
+        private void cancelSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (_backgroundWorkerThread != null) _backgroundWorkerThread.Interrupt();
+
+            Boop.Text = "Поиск был прерван пользователем";
+            pbStatus.Visibility = Visibility.Hidden;
+            btnClick.IsEnabled = true;
+            cancelSearchButton.IsEnabled = false;
+
+
         }
     }
 

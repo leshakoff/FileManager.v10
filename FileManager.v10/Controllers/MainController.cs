@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 
 namespace FileManager.v10
 {
@@ -41,64 +42,113 @@ namespace FileManager.v10
             }
         }
 
+        public static List<FileAbout> GetList(List<DirectoryInfo> dirs, List<FileInfo> files)
+        {
+            List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
+
+            foreach (var d in dirs)
+            {
+                // img.Freeze мы используем для того, чтобы не возникало исключений. 
+                // исключения ругаются на то, что мы получаем картинку в одном потоке, 
+                // и пытаемся её использовать в другом; в нашем случае, backgroundworker
+                // пытается получить картинку из основного потока, и вылетает исключение. 
+                ImageSource img = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close);
+                img.Freeze();
+
+                FileAbout fi = new FileAbout
+                {
+                    Name = d.Name,
+                    CreationTime = d.CreationTime,
+                    Extension = "Папка",
+                    LastWrite = d.LastWriteTime,
+                    FullPath = d.FullName,
+                    Image = img
+                };
+                allFilesAndDirectories.Add(fi);
+            }
+
+            foreach (var f in files)
+            {
+                ImageSource img = FileManager.v10.Models.FileManager.GetImageSource(f.FullName);
+                img.Freeze();
+                FileAbout fiAbout = new FileAbout
+                {
+                    Name = f.Name,
+                    CreationTime = f.CreationTime,
+                    Extension = f.Extension,
+                    LastWrite = f.LastWriteTime,
+                    FullPath = f.FullName,
+                    Image = img
+                };
+                allFilesAndDirectories.Add(fiAbout);
+
+            }
+
+            return allFilesAndDirectories;
+        }
+
         public static List<FileAbout> GetList(string path)
         {
             List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
             if (!File.Exists(path))
             {
-                List<string> dirs = Directory.GetDirectories(path).ToList();
-                List<string> files = Directory.GetFiles(path).ToList();
-
-                foreach (var d in dirs)
+                try
                 {
+                    List<string> dirs = Directory.EnumerateDirectories(path).ToList();
+                    List<string> files = Directory.EnumerateFiles(path).ToList();
 
-                    DirectoryInfo di = new DirectoryInfo(d);
-                    if (!object.Equals((di.Attributes & FileAttributes.System), FileAttributes.System) &&
-                        !object.Equals((di.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
+                    foreach (var d in dirs)
                     {
 
-                        //ImageSource img = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close).Clone();
-
-                        FileAbout fi = new FileAbout
+                        DirectoryInfo di = new DirectoryInfo(d);
+                        if (!object.Equals((di.Attributes & FileAttributes.System), FileAttributes.System) &&
+                            !object.Equals((di.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
                         {
-                            Name = di.Name,
-                            CreationTime = di.CreationTime,
-                            Extension = "Папка",
-                            Size = GetSize(DirSize(di)),
-                            LastWrite = di.LastWriteTime,
-                            FullPath = di.FullName,
-                            Image = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close)
-                        };
-                        allFilesAndDirectories.Add(fi);
+
+                            //ImageSource img = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close).Clone();
+
+                            FileAbout fi = new FileAbout
+                            {
+                                Name = di.Name,
+                                CreationTime = di.CreationTime,
+                                Extension = "Папка",
+                                Size = GetSize(DirSize(di)),
+                                LastWrite = di.LastWriteTime,
+                                FullPath = di.FullName,
+                                Image = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close)
+                            };
+                            allFilesAndDirectories.Add(fi);
+                        }
+
+
                     }
 
-
-                }
-
-                foreach (var f in files)
-                {
-                    FileInfo fi = new FileInfo(f);
-                    if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
-                        !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
+                    foreach (var f in files)
                     {
-                        /*FileManager.v10.Models.FileManager.GetImageSource(fi.FullName).Freeze()*/
-                        ;
-                        FileAbout fiAbout = new FileAbout
+                        FileInfo fi = new FileInfo(f);
+                        if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
+                            !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
                         {
-                            Name = fi.Name,
-                            CreationTime = fi.CreationTime,
-                            Extension = fi.Extension,
-                            LastWrite = fi.LastWriteTime,
-                            Size = GetSize(fi.Length),
-                            FullPath = fi.FullName,
-                            Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
-                        };
-                        allFilesAndDirectories.Add(fiAbout);
+                            /*FileManager.v10.Models.FileManager.GetImageSource(fi.FullName).Freeze()*/
+                            ;
+                            FileAbout fiAbout = new FileAbout
+                            {
+                                Name = fi.Name,
+                                CreationTime = fi.CreationTime,
+                                Extension = fi.Extension,
+                                LastWrite = fi.LastWriteTime,
+                                Size = GetSize(fi.Length),
+                                FullPath = fi.FullName,
+                                Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
+                            };
+                            allFilesAndDirectories.Add(fiAbout);
+                        }
+
                     }
-
                 }
-
+                catch
+                { }
 
             }
             else
