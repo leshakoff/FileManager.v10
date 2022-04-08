@@ -6,13 +6,22 @@
         xmlns:classes="clr-namespace:FileManager.v10.Models"
         xmlns:local="clr-namespace:FileManager.v10"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="1000">
+        Title="MainWindow" Height="500" Width="1000" Background="{StaticResource backgroundBrush}">
     <StackPanel Orientation="Horizontal">
-        <TreeView Name="treeView" Margin="5" MouseDoubleClick="ItemsControl_MouseDoubleClick" MouseLeftButtonUp="treeView_MouseLeftButtonDown" Width="300">
+        <TreeView Name="treeView" 
+                  Margin="5" 
+                  MouseDoubleClick="ItemsControl_MouseDoubleClick" 
+                  MouseLeftButtonUp="treeView_MouseLeftButtonDown" 
+                  MinWidth="300"
+                  Background="{StaticResource backgroundBrush}"
+                  BorderThickness="0"
+                  >
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                     <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                    <Setter Property="Foreground" Value="{StaticResource foregroundBrush}" />
+                    <Setter Property="FontSize" Value="14" />
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.Resources>
@@ -33,7 +42,8 @@
 
             <TextBlock
                 Text="Введите название файла/папки или расширение в формате .txt"
-                Width="400"/>
+                Width="400"
+                Foreground="{StaticResource foregroundBrush}"/>
 
             <StackPanel Orientation="Horizontal">
                 
@@ -45,12 +55,14 @@
                 <Button Content="SEARCH!" 
                     Click="Button_Click" 
                     x:Name="btnClick" 
-                    IsEnabled="False" Width="124"/>
+                    IsEnabled="False" Width="124"
+                    Background="{StaticResource greenButton}"/>
 
                 <Button Content="STOP SEARCH" 
                         Click="cancelSearchButton_Click"
                     x:Name="cancelSearchButton" 
-                    IsEnabled="False" Width="124"/>
+                    IsEnabled="False" Width="124"
+                    Background="{StaticResource redButton}"/>
 
                 <ComboBox x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
@@ -86,10 +98,35 @@
 
             <DataGrid CanUserAddRows="False" 
                       x:Name="dataGrid" 
-                      AutoGenerateColumns="False" 
+                      AutoGenerateColumns="False"
                       IsReadOnly="True" 
                       Width="600" 
-                      Height="300" >
+                      Height="300" 
+                      Margin="0"
+                      GridLinesVisibility="None"
+                      HorizontalAlignment="Stretch"
+                      Background="{StaticResource backgroundBrush}"
+                      Foreground="#cdcdcd"
+                      CellStyle="{StaticResource CellStyleWithPadding}"
+                      RowHeaderWidth="0"
+                      >
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}" >
+                        <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"></Setter>
+                        <Setter Property="Foreground" Value="{StaticResource foregroundBrush}"></Setter>
+                        <Setter Property="BorderBrush" Value="{StaticResource foregroundBrush}"></Setter>
+                        <Setter Property="Padding" Value="4" />
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="BorderThickness" Value="1"></Setter>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <Setter Property="Background" Value="{StaticResource backgroundBrush}" />
+                    </Style>
+                </DataGrid.RowStyle>
 
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
@@ -97,18 +134,34 @@
                             <DataTemplate>
                                 <Image Source="{Binding Image}" Stretch="None" />
                             </DataTemplate>
+
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    
+                    
+
                     <DataGridTextColumn Header="Имя" 
-                                        Binding="{Binding Name}"/>
+                                        Binding="{Binding Name}"
+                                        Foreground="{StaticResource foregroundBrush}"
+                                        Width="*"
+                                        />
                     <DataGridTextColumn Header="Расширение" 
-                                        Binding="{Binding Extension}" />
+                                        Binding="{Binding Extension}"
+                                        Foreground="{StaticResource mutedColorForDG}"
+                                        Width="Auto"
+                                        />
                     <DataGridTextColumn Header="Размер" 
-                                        Binding="{Binding Size}" />
+                                        Binding="{Binding Size}"
+                                        Foreground="{StaticResource mutedColorForDG}"
+                                        Width="Auto"/>
                     <DataGridTextColumn Header="Дата создания" 
-                                        Binding="{Binding CreationTime, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}" />
+                                        Binding="{Binding CreationTime, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}"
+                                        Foreground="{StaticResource mutedColorForDG}"
+                                        Width="Auto"/>
                     <DataGridTextColumn Header="Последнее изменение" 
-                                        Binding="{Binding LastWrite, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}" />
+                                        Binding="{Binding LastWrite, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}"
+                                        Foreground="{StaticResource mutedColorForDG}"
+                                        Width="Auto"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

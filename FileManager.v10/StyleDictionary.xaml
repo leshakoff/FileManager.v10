@@ -1,0 +1,38 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key = "backgroundBrush" Color = "#e3e3e3" />
+    <SolidColorBrush x:Key = "foregroundBrush" Color = "#4c4c4c" />
+
+    <SolidColorBrush x:Key = "greenButton" Color = "#95CD41" />
+    <SolidColorBrush x:Key = "activeGreenButton" Color = "#F6D860" />
+
+
+    <SolidColorBrush x:Key = "redButton" Color = "#FF7F3F" />
+    <SolidColorBrush x:Key = "activeRedButton" Color = "#EA5C2B" />
+
+
+    <SolidColorBrush x:Key = "backgroundForDGHeader" Color = "#E6BA95" />
+    <SolidColorBrush x:Key = "foreroundForDG" Color = "#A2B38B" />
+    <SolidColorBrush x:Key = "mutedColorForDG" Color = "#525E75" />
+
+    <Style  x:Key="CellStyleWithPadding" TargetType="{x:Type DataGridCell}"  >
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Background="{TemplateBinding Background}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}"                                          
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
