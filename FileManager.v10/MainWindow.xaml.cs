@@ -75,6 +75,9 @@ namespace FileManager.v10
             if (treeView.SelectedItem != null)
             {
                 string path = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+
+                // v вот это нужно делегировать другому потоку, а пока он выполняется, 
+                // нужно добавить какое-то отображение выполняемого прогресса
                 dataGrid.ItemsSource = MainController.GetList(path);
                 if (dataGrid.Items.Count == 0)
                     Boop.Text = "Ничего не найдено.";
@@ -101,7 +104,10 @@ namespace FileManager.v10
 
             dataGrid.ItemsSource = aboutAll;
             if (dataGrid.Items.Count == 0)
+            {
                 Boop.Text = $"Упс... По вашему запросу ничего не найдено";
+                cancelSearchButton.IsEnabled = false;
+            }
             else
             {
                 Boop.Text = $"Поиск завершён! \n" +
@@ -128,27 +134,40 @@ namespace FileManager.v10
                 sp.Start();
                 BackgroundWorker bg = sender as BackgroundWorker;
                 WorkerParam wp = (WorkerParam)e.Argument;
-                string search = $"*{wp.param}*";
-                string path = wp.sourcePath;
+                if (!String.IsNullOrEmpty(wp.param) && !String.IsNullOrWhiteSpace(wp.param))
+                {
+                    string search = $"*{wp.param}*";
+                    string path = wp.sourcePath;
 
 
-                List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
+                    List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
-                Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(path, search);
+                    Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(path, search);
 
-                Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(path, search);
+                    Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(path, search);
 
-                aboutAll = MainController.GetList(dirs.Result, task.Result);
+                    aboutAll = MainController.GetList(dirs.Result, task.Result);
 
-                sp.Stop();
-                stopwatch = sp.Elapsed;
-                quantity = aboutAll.Count;
+                    sp.Stop();
+                    stopwatch = sp.Elapsed;
+                    quantity = aboutAll.Count;
+                }
+                else
+                {
+                    SearchStringIsEmpty();
+                }
+                
             }
             catch (ThreadInterruptedException)
             {
                 
             }
 
+        }
+
+        private void SearchStringIsEmpty()
+        {
+            MessageBox.Show("Строка поиска пуста");
         }
 
         private void BoopIsto_TextChanged(object sender, TextChangedEventArgs e)
@@ -177,15 +196,11 @@ namespace FileManager.v10
 
         private void cancelSearchButton_Click(object sender, RoutedEventArgs e)
         {
-
             if (_backgroundWorkerThread != null) _backgroundWorkerThread.Interrupt();
-
             Boop.Text = "Поиск был прерван пользователем";
             pbStatus.Visibility = Visibility.Hidden;
             btnClick.IsEnabled = true;
             cancelSearchButton.IsEnabled = false;
-
-
         }
     }
 

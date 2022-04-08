@@ -52,17 +52,25 @@
                      TextChanged="BoopIsto_TextChanged" 
                      
                      />
-                <Button Content="SEARCH!" 
+                <Border BorderBrush="{StaticResource borderForBrush}" BorderThickness="1">
+                    <Button Content="SEARCH!"
                     Click="Button_Click" 
                     x:Name="btnClick" 
                     IsEnabled="False" Width="124"
-                    Background="{StaticResource greenButton}"/>
+                    Style="{StaticResource buttonGreen}" 
+                     />
+                </Border>
 
+                <Border  BorderBrush="{StaticResource borderForBrush}" BorderThickness="1" >
                 <Button Content="STOP SEARCH" 
                         Click="cancelSearchButton_Click"
-                    x:Name="cancelSearchButton" 
-                    IsEnabled="False" Width="124"
-                    Background="{StaticResource redButton}"/>
+                    x:Name="cancelSearchButton" Width="124"
+                    Style="{StaticResource buttonRed}" IsEnabled="False">
+                </Button>
+                </Border>
+
+
+
 
                 <ComboBox x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
@@ -101,7 +109,7 @@
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 
                       Width="600" 
-                      Height="300" 
+                      MaxHeight="300" 
                       Margin="0"
                       GridLinesVisibility="None"
                       HorizontalAlignment="Stretch"
@@ -109,12 +117,13 @@
                       Foreground="#cdcdcd"
                       CellStyle="{StaticResource CellStyleWithPadding}"
                       RowHeaderWidth="0"
+
                       >
 
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="{x:Type DataGridColumnHeader}" >
                         <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"></Setter>
-                        <Setter Property="Foreground" Value="{StaticResource foregroundBrush}"></Setter>
+                        <Setter Property="Foreground" Value="{StaticResource foregroundForDGHeader}"></Setter>
                         <Setter Property="BorderBrush" Value="{StaticResource foregroundBrush}"></Setter>
                         <Setter Property="Padding" Value="4" />
                         <Setter Property="FontSize" Value="12" />

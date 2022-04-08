@@ -4,6 +4,8 @@
     <SolidColorBrush x:Key = "backgroundBrush" Color = "#e3e3e3" />
     <SolidColorBrush x:Key = "foregroundBrush" Color = "#4c4c4c" />
 
+    <SolidColorBrush x:Key = "borderForBrush" Color = "#9c958e" />
+
     <SolidColorBrush x:Key = "greenButton" Color = "#95CD41" />
     <SolidColorBrush x:Key = "activeGreenButton" Color = "#F6D860" />
 
@@ -12,7 +14,8 @@
     <SolidColorBrush x:Key = "activeRedButton" Color = "#EA5C2B" />
 
 
-    <SolidColorBrush x:Key = "backgroundForDGHeader" Color = "#E6BA95" />
+    <SolidColorBrush x:Key = "backgroundForDGHeader" Color = "#95CD41" />
+    <SolidColorBrush x:Key = "foregroundForDGHeader" Color = "#064635" />
     <SolidColorBrush x:Key = "foreroundForDG" Color = "#A2B38B" />
     <SolidColorBrush x:Key = "mutedColorForDG" Color = "#525E75" />
 
@@ -33,6 +36,75 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="buttonRed">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="#ff8b76" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="MyContentPresenter" 
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#FFBBBB"/>
+                <Setter Property="Foreground" Value="{StaticResource foregroundBrush}"/>
+            </Trigger>
+
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#ff3031"/>
+            </Trigger>
+            
+        </Style.Triggers>
+    </Style>
+
+
+    <Style TargetType="Button" x:Key="buttonGreen">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="#95CD41" />
+
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="MyContentPresenter" 
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"
+                                          />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#F0FFC2"/>
+                <Setter Property="Foreground" Value="{StaticResource foregroundBrush}"/>
+            </Trigger>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#c3e71e"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+
     </Style>
 
 </ResourceDictionary>
