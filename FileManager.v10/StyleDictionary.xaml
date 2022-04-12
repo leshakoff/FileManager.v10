@@ -92,7 +92,6 @@
         </Setter>
 
         <Style.Triggers>
-            
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Background" Value="#a2a983"/>
                 <Setter Property="Foreground" Value="{StaticResource foregroundBrush}"/>
@@ -101,9 +100,46 @@
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#8fe953"/>
             </Trigger>
-
         </Style.Triggers>
 
+
+    </Style>
+
+    <Style TargetType="Button" x:Key="collapseButton">
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="MyContentPresenter" 
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"
+                                          />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="False">
+                <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"/>
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Image Source="pack://application:,,,/Icons/collapseWindow.png"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#8fe953"/>
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Image Source="pack://application:,,,/Icons/add.png"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
 
     </Style>
 

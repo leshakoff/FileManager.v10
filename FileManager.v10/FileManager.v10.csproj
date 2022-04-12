@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Icons\add.png" />
+    <None Remove="Icons\closeWindow.png" />
+    <None Remove="Icons\collapseWindow.png" />
+    <None Remove="Icons\delete.png" />
+    <None Remove="Icons\restoreDown.png" />
+    <None Remove="Icons\spinner.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
 
@@ -14,6 +23,15 @@
     <Reference Include="FastSearchLibrary">
       <HintPath>bin\Debug\netcoreapp3.1\FastSearchLibrary.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\add.png" />
+    <Resource Include="Icons\closeWindow.png" />
+    <Resource Include="Icons\collapseWindow.png" />
+    <Resource Include="Icons\delete.png" />
+    <Resource Include="Icons\restoreDown.png" />
+    <Resource Include="Icons\spinner.gif" />
   </ItemGroup>
 
 </Project>

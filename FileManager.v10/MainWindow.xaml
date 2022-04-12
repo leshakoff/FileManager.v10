@@ -6,97 +6,145 @@
         xmlns:classes="clr-namespace:FileManager.v10.Models"
         xmlns:local="clr-namespace:FileManager.v10"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="1000" Background="{StaticResource backgroundBrush}">
-    <StackPanel Orientation="Horizontal">
-        <TreeView Name="treeView" 
+        
+        Title="MainWindow" 
+        Height="500" 
+        Width="1000" 
+        Background="Transparent" 
+        AllowsTransparency="True"
+        WindowStyle="None">
+
+    <Grid x:Name="mainWindow">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.07*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.6*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" RadiusX="20" RadiusY="20" Fill="{StaticResource backgroundBrush}" Height="500" Width="1000" />
+
+        <Grid x:Name="header" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource backgroundForDGHeader}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="0.034*"></ColumnDefinition>
+                <ColumnDefinition Width="0.034*"></ColumnDefinition>
+                <ColumnDefinition Width="0.034*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            
+
+            <TextBlock Margin="16,4,0,0" Grid.Column="0" FontSize="16" FontFamily="Segoe UI" FontWeight="Bold">FileManager</TextBlock>
+            <Button Grid.Column="1" BorderBrush="{x:Null}" Style="{StaticResource collapseButton}"></Button>
+            <Button Grid.Column="2" BorderBrush="{x:Null}" >
+                <Button.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Icons/restoreDown.png"/>
+                </Button.Background>
+            </Button>
+            <Button Grid.Column="3" BorderBrush="{x:Null}">
+                <Button.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Icons/closeWindow.png"/>
+                </Button.Background>
+            </Button>
+        </Grid>
+        
+
+            <TreeView Name="treeView" 
+                      Grid.Row="1"
+                      Grid.Column="0"
                   Margin="5" 
                   MouseDoubleClick="ItemsControl_MouseDoubleClick" 
                   MouseLeftButtonUp="treeView_MouseLeftButtonDown" 
                   MinWidth="300"
-                  Background="{StaticResource backgroundBrush}"
+                  Background="Transparent"
                   BorderThickness="0"
                   >
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                    <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
-                    <Setter Property="Foreground" Value="{StaticResource foregroundBrush}" />
-                    <Setter Property="FontSize" Value="14" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
-                        <TextBlock Text="{Binding Path=FileSystemInfo.Name}"></TextBlock>
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.Resources>
-        </TreeView>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                        <Setter Property="Foreground" Value="{StaticResource foregroundBrush}" />
+                        <Setter Property="FontSize" Value="14" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
+                            <TextBlock Text="{Binding Path=FileSystemInfo.Name}"></TextBlock>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+        
+        
+            <StackPanel Grid.Row="1" Grid.Column="2">
 
-
-        <StackPanel>
-
-
-
-
-            <TextBlock
+                <TextBlock
                 Text="Введите название файла/папки или расширение в формате .txt"
                 Width="400"
                 Foreground="{StaticResource foregroundBrush}"/>
 
-            <StackPanel Orientation="Horizontal">
-                
-                <TextBox x:Name="BoopIsto" 
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBox x:Name="BoopIsto" 
                      Width="250" 
                      TextChanged="BoopIsto_TextChanged" 
                      
                      />
-                <Border BorderBrush="{StaticResource borderForBrush}" BorderThickness="1">
-                    <Button Content="SEARCH!"
+                    <Border BorderBrush="{StaticResource borderForBrush}" BorderThickness="1">
+                        <Button Content="SEARCH!"
                     Click="Button_Click" 
                     x:Name="btnClick" 
                     IsEnabled="False" Width="124"
                     Style="{StaticResource buttonGreen}" 
                      />
-                </Border>
+                    </Border>
 
-                <Border  BorderBrush="{StaticResource borderForBrush}" BorderThickness="1" >
-                <Button Content="STOP SEARCH" 
+                    <Border  BorderBrush="{StaticResource borderForBrush}" BorderThickness="1" >
+                        <Button Content="STOP SEARCH" 
                         Click="cancelSearchButton_Click"
                     x:Name="cancelSearchButton" Width="124"
                     Style="{StaticResource buttonRed}" IsEnabled="False">
-                </Button>
-                </Border>
+                        </Button>
+                    </Border>
 
 
 
 
-                <ComboBox x:Name="searchLocation" 
+                    <ComboBox x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
                           DropDownOpened="searchLocation_DropDownOpened">
-                    <ComboBoxItem IsSelected="True">
-                        <TextBlock>C:\</TextBlock>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock>D:\</TextBlock>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock x:Name="currentFolder"></TextBlock>
-                    </ComboBoxItem>
-                </ComboBox>
+                        <ComboBoxItem IsSelected="True">
+                            <TextBlock>C:\</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock>D:\</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock x:Name="currentFolder"></TextBlock>
+                        </ComboBoxItem>
+                    </ComboBox>
 
 
 
 
 
-            </StackPanel>
-            
-         
+                </StackPanel>
 
-            <TextBlock x:Name="Boop" />
 
-            <ProgressBar 
+
+                <TextBlock x:Name="Boop" />
+
+                <ProgressBar 
             Visibility="Hidden"
             VerticalAlignment="Center"
             Grid.Row="0"
@@ -104,7 +152,10 @@
             Minimum="0" Maximum="100"
             Name="pbStatus" />
 
-            <DataGrid CanUserAddRows="False" 
+                <Button>
+
+                </Button>
+                <DataGrid CanUserAddRows="False" 
                       x:Name="dataGrid" 
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 
@@ -120,62 +171,62 @@
 
                       >
 
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="{x:Type DataGridColumnHeader}" >
-                        <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"></Setter>
-                        <Setter Property="Foreground" Value="{StaticResource foregroundForDGHeader}"></Setter>
-                        <Setter Property="BorderBrush" Value="{StaticResource foregroundBrush}"></Setter>
-                        <Setter Property="Padding" Value="4" />
-                        <Setter Property="FontSize" Value="12" />
-                        <Setter Property="BorderThickness" Value="1"></Setter>
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}" >
+                            <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"></Setter>
+                            <Setter Property="Foreground" Value="{StaticResource foregroundForDGHeader}"></Setter>
+                            <Setter Property="BorderBrush" Value="{StaticResource foregroundBrush}"></Setter>
+                            <Setter Property="Padding" Value="4" />
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="BorderThickness" Value="1"></Setter>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
 
-                <DataGrid.RowStyle>
-                    <Style TargetType="{x:Type DataGridRow}">
-                        <Setter Property="Background" Value="{StaticResource backgroundBrush}" />
-                    </Style>
-                </DataGrid.RowStyle>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <Setter Property="Background" Value="{StaticResource backgroundBrush}" />
+                        </Style>
+                    </DataGrid.RowStyle>
 
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding Image}" Stretch="None" />
-                            </DataTemplate>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Image}" Stretch="None" />
+                                </DataTemplate>
 
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    
-                    
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Имя" 
+
+
+                        <DataGridTextColumn Header="Имя" 
                                         Binding="{Binding Name}"
                                         Foreground="{StaticResource foregroundBrush}"
                                         Width="*"
+                                        
                                         />
-                    <DataGridTextColumn Header="Расширение" 
+                        <DataGridTextColumn Header="Расширение" 
                                         Binding="{Binding Extension}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"
                                         />
-                    <DataGridTextColumn Header="Размер" 
+                        <DataGridTextColumn Header="Размер" 
                                         Binding="{Binding Size}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"/>
-                    <DataGridTextColumn Header="Дата создания" 
+                        <DataGridTextColumn Header="Дата создания" 
                                         Binding="{Binding CreationTime, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"/>
-                    <DataGridTextColumn Header="Последнее изменение" 
+                        <DataGridTextColumn Header="Последнее изменение" 
                                         Binding="{Binding LastWrite, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </StackPanel>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
 
-
-    </StackPanel>
+    </Grid>
 
 </Window>
