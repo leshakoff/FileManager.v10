@@ -12,6 +12,8 @@ namespace FileManager.v10
 {
     public class MainController
     {
+        public string reason = "";
+
         public static void OpenInWinExplorer(string file)
         {
             try
@@ -46,43 +48,49 @@ namespace FileManager.v10
         {
             List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
-            foreach (var d in dirs)
+            try
             {
-                // img.Freeze мы используем для того, чтобы не возникало исключений. 
-                // исключения ругаются на то, что мы получаем картинку в одном потоке, 
-                // и пытаемся её использовать в другом; в нашем случае, backgroundworker
-                // пытается получить картинку из основного потока, и вылетает исключение. 
-                ImageSource img = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close);
-                img.Freeze();
-
-                FileAbout fi = new FileAbout
+                foreach (var d in dirs)
                 {
-                    Name = d.Name,
-                    CreationTime = d.CreationTime,
-                    Extension = "Папка",
-                    LastWrite = d.LastWriteTime,
-                    FullPath = d.FullName,
-                    Image = img
-                };
-                allFilesAndDirectories.Add(fi);
-            }
+                    // img.Freeze мы используем для того, чтобы не возникало исключений. 
+                    // исключения ругаются на то, что мы получаем картинку в одном потоке, 
+                    // и пытаемся её использовать в другом; в нашем случае, backgroundworker
+                    // пытается получить картинку из основного потока, и вылетает исключение. 
+                    ImageSource img = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close);
+                    img.Freeze();
 
-            foreach (var f in files)
-            {
-                ImageSource img = FileManager.v10.Models.FileManager.GetImageSource(f.FullName);
-                img.Freeze();
-                FileAbout fiAbout = new FileAbout
+                    FileAbout fi = new FileAbout
+                    {
+                        Name = d.Name,
+                        CreationTime = d.CreationTime,
+                        Extension = "Папка",
+                        LastWrite = d.LastWriteTime,
+                        FullPath = d.FullName,
+                        Image = img
+                    };
+                    allFilesAndDirectories.Add(fi);
+                }
+
+                foreach (var f in files)
                 {
-                    Name = f.Name,
-                    CreationTime = f.CreationTime,
-                    Extension = f.Extension,
-                    LastWrite = f.LastWriteTime,
-                    FullPath = f.FullName,
-                    Image = img
-                };
-                allFilesAndDirectories.Add(fiAbout);
+                    ImageSource img = FileManager.v10.Models.FileManager.GetImageSource(f.FullName);
+                    img.Freeze();
+                    FileAbout fiAbout = new FileAbout
+                    {
+                        Name = f.Name,
+                        CreationTime = f.CreationTime,
+                        Extension = f.Extension,
+                        LastWrite = f.LastWriteTime,
+                        FullPath = f.FullName,
+                        Image = img
+                    };
+                    allFilesAndDirectories.Add(fiAbout);
 
+                }
             }
+            catch
+            { }
+
 
             return allFilesAndDirectories;
         }
@@ -148,7 +156,9 @@ namespace FileManager.v10
                     }
                 }
                 catch
-                { }
+                {
+
+                }
 
             }
             else

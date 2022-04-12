@@ -56,13 +56,13 @@ namespace FileManager.v10
 
             worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(Search);
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SerchCompleted);
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SearchCompleted);
             worker.WorkerSupportsCancellation = true;
 
         }
 
 
-        private void ItemsControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void OpenInExplorer(object sender, MouseButtonEventArgs e)
         {
             if (treeView.SelectedItem != null)
             {
@@ -71,7 +71,7 @@ namespace FileManager.v10
             }
         }
 
-        private void treeView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void GetFilesInCurrentFolder(object sender, MouseButtonEventArgs e)
         {
             if (treeView.SelectedItem != null)
             {
@@ -86,7 +86,7 @@ namespace FileManager.v10
 
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void StartSearch(object sender, RoutedEventArgs e)
         {
             btnClick.IsEnabled = false;
             cancelSearchButton.IsEnabled = true;
@@ -94,15 +94,14 @@ namespace FileManager.v10
             WorkerParam wp = new WorkerParam(BoopIsto.Text, searchLocation.SelectedItem
                 .ToString()
                 .Replace("System.Windows.Controls.ComboBoxItem: ", ""));
-            worker.RunWorkerAsync(wp);
+            if (!worker.IsBusy) worker.RunWorkerAsync(wp);
             Boop.Text = $"Выполняется поиск в {wp.sourcePath} по запросу: {BoopIsto.Text}...";
             pbStatus.IsIndeterminate = true;
 
         }
 
-        private void SerchCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void SearchCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
             dataGrid.ItemsSource = aboutAll;
             if (dataGrid.Items.Count == 0)
             {
@@ -118,8 +117,6 @@ namespace FileManager.v10
                             $":{stopwatch.Seconds} сс" +
                             $":{stopwatch.Milliseconds} мс";
             }
-
-
 
             pbStatus.IsIndeterminate = false;
             pbStatus.Visibility = Visibility.Hidden;
@@ -171,7 +168,7 @@ namespace FileManager.v10
             MessageBox.Show("Строка поиска пуста");
         }
 
-        private void BoopIsto_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchStringChanged(object sender, TextChangedEventArgs e)
         {
             if (!String.IsNullOrEmpty(BoopIsto.Text)
                 && !String.IsNullOrWhiteSpace(BoopIsto.Text)
@@ -182,20 +179,21 @@ namespace FileManager.v10
             }
         }
 
-        private void searchLocation_DropDownOpened(object sender, EventArgs e)
+        private void GetCurrentSearchLocation(object sender, EventArgs e)
         {
             if (treeView.SelectedItem != null)
             {
                 currentFolder.Text = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+                currentFolderCombobox.Visibility = Visibility.Visible;
             }
             else
             {
-                currentFolder.Visibility = Visibility.Collapsed;
+                currentFolderCombobox.Visibility = Visibility.Collapsed;
             }
 
         }
 
-        private void cancelSearchButton_Click(object sender, RoutedEventArgs e)
+        private void CancelSearchClick(object sender, RoutedEventArgs e)
         {
             if (_backgroundWorkerThread != null) _backgroundWorkerThread.Interrupt();
             Boop.Text = "Поиск был прерван пользователем";

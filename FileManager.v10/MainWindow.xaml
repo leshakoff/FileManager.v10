@@ -25,12 +25,25 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" RadiusX="20" RadiusY="20" Fill="{StaticResource backgroundBrush}" Height="500" Width="1000" />
+        <Rectangle x:Name="mainBackground" 
+                   Grid.Row="0" 
+                   Grid.Column="0" 
+                   Grid.ColumnSpan="2" 
+                   Grid.RowSpan="2" 
+                   RadiusX="20" 
+                   RadiusY="20" 
+                   Fill="{StaticResource backgroundBrush}" 
+                   Height="Auto" Width="Auto" />
 
-        <Grid x:Name="header" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource backgroundForDGHeader}">
+        <Grid x:Name="header" 
+              Grid.Row="0" 
+              Grid.Column="0" 
+              Grid.ColumnSpan="2"
+              Background="{StaticResource backgroundForDGHeader}"
+              VerticalAlignment="Top">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -42,7 +55,7 @@
             
             
 
-            <TextBlock Margin="16,4,0,0" Grid.Column="0" FontSize="16" FontFamily="Segoe UI" FontWeight="Bold">FileManager</TextBlock>
+            <TextBlock VerticalAlignment="Center" Margin="16,4,0,0" Grid.Column="0" FontSize="16" FontFamily="Segoe UI" FontWeight="Bold">FileManager</TextBlock>
             <Button Grid.Column="1" BorderBrush="{x:Null}" Style="{StaticResource collapseButton}" Click="CollapseWindow"/>
             <Button Grid.Column="2" BorderBrush="{x:Null}" Style="{StaticResource restoreDownButton}" Click="RestoreWindow" />
             <Button Grid.Column="3" BorderBrush="{x:Null}" Style="{StaticResource closeWindowButton}" Click="CloseWindow" />
@@ -53,8 +66,8 @@
                       Grid.Row="1"
                       Grid.Column="0"
                   Margin="5" 
-                  MouseDoubleClick="ItemsControl_MouseDoubleClick" 
-                  MouseLeftButtonUp="treeView_MouseLeftButtonDown" 
+                  MouseDoubleClick="OpenInExplorer" 
+                  MouseLeftButtonUp="GetFilesInCurrentFolder" 
                   MinWidth="300"
                   Background="Transparent"
                   BorderThickness="0"
@@ -78,9 +91,10 @@
             </TreeView>
         
         
-            <StackPanel Grid.Row="1" Grid.Column="2">
+            <StackPanel Grid.Row="1" Grid.Column="2" Margin="12">
 
                 <TextBlock
+                Margin="6"
                 Text="Введите название файла/папки или расширение в формате .txt"
                 Width="400"
                 Foreground="{StaticResource foregroundBrush}"/>
@@ -89,39 +103,36 @@
 
                     <TextBox x:Name="BoopIsto" 
                      Width="250" 
-                     TextChanged="BoopIsto_TextChanged" 
-                     
-                     />
+                     TextChanged="SearchStringChanged" />
+                    
                     <Border BorderBrush="{StaticResource borderForBrush}" BorderThickness="1">
                         <Button Content="SEARCH!"
-                    Click="Button_Click" 
-                    x:Name="btnClick" 
-                    IsEnabled="False" Width="124"
-                    Style="{StaticResource buttonGreen}" 
-                     />
+                                Click="StartSearch" 
+                                x:Name="btnClick" 
+                                IsEnabled="False" Width="124"
+                                Style="{StaticResource buttonGreen}" />
                     </Border>
 
                     <Border  BorderBrush="{StaticResource borderForBrush}" BorderThickness="1" >
-                        <Button Content="STOP SEARCH" 
-                        Click="cancelSearchButton_Click"
-                    x:Name="cancelSearchButton" Width="124"
-                    Style="{StaticResource buttonRed}" IsEnabled="False">
-                        </Button>
-                    </Border>
+                    <Button Content="STOP SEARCH" 
+                                Click="CancelSearchClick"
+                                x:Name="cancelSearchButton" Width="124"
+                                Style="{StaticResource buttonRed}" IsEnabled="False" />
+                </Border>
 
 
 
 
                     <ComboBox x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
-                          DropDownOpened="searchLocation_DropDownOpened">
+                          DropDownOpened="GetCurrentSearchLocation">
                         <ComboBoxItem IsSelected="True">
                             <TextBlock>C:\</TextBlock>
                         </ComboBoxItem>
                         <ComboBoxItem>
                             <TextBlock>D:\</TextBlock>
                         </ComboBoxItem>
-                        <ComboBoxItem>
+                        <ComboBoxItem Name="currentFolderCombobox" Visibility="Collapsed">
                             <TextBlock x:Name="currentFolder"></TextBlock>
                         </ComboBoxItem>
                     </ComboBox>
@@ -139,19 +150,15 @@
                 <ProgressBar 
             Visibility="Hidden"
             VerticalAlignment="Center"
-            Grid.Row="0"
             Height="20" Width="400"
             Minimum="0" Maximum="100"
             Name="pbStatus" />
 
-                <Button>
-
-                </Button>
                 <DataGrid CanUserAddRows="False" 
                       x:Name="dataGrid" 
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 
-                      Width="600" 
+                      Width="Auto" 
                       MaxHeight="300" 
                       Margin="0"
                       GridLinesVisibility="None"
