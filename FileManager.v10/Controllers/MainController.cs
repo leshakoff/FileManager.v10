@@ -12,7 +12,6 @@ namespace FileManager.v10
 {
     public class MainController
     {
-        public string reason = "";
 
         public static void OpenInWinExplorer(string file)
         {
@@ -89,11 +88,13 @@ namespace FileManager.v10
                 }
             }
             catch
-            { }
-
+            { 
+                
+            }
 
             return allFilesAndDirectories;
         }
+
 
         public static List<FileAbout> GetList(string path)
         {

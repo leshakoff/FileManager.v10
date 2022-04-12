@@ -27,6 +27,7 @@ namespace FileManager.v10
         public TimeSpan stopwatch;
         public long quantity;
         bool MainWindowState = false;
+        public string Reason = "";
 
 
         public List<FileAbout> aboutAll = new List<FileAbout>();
@@ -52,7 +53,6 @@ namespace FileManager.v10
             {
                 if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
             }
-
 
             worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(Search);
