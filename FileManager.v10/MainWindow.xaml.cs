@@ -26,6 +26,7 @@ namespace FileManager.v10
         private Thread _backgroundWorkerThread;
         public TimeSpan stopwatch;
         public long quantity;
+        bool MainWindowState = false;
 
 
         public List<FileAbout> aboutAll = new List<FileAbout>();
@@ -201,6 +202,36 @@ namespace FileManager.v10
             pbStatus.Visibility = Visibility.Hidden;
             btnClick.IsEnabled = true;
             cancelSearchButton.IsEnabled = false;
+        }
+
+        private void CollapseWindow(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
+
+        private void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            Application app = Application.Current;
+            app.Shutdown();
+        }
+
+        private void RestoreWindow(object sender, RoutedEventArgs e)
+        {
+            if (!MainWindowState)
+            {
+                Application.Current.MainWindow.WindowState = WindowState.Maximized;
+                MainWindowState = true;
+            }
+            else
+            {
+                Application.Current.MainWindow.WindowState = WindowState.Normal;
+                MainWindowState = false;
+            }
+        }
+
+        private void DragNDropWindow(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 

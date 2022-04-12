@@ -106,7 +106,6 @@
     </Style>
 
     <Style TargetType="Button" x:Key="collapseButton">
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -132,10 +131,84 @@
                 </Setter>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#8fe953"/>
+                <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"/>
                 <Setter Property="Content">
                     <Setter.Value>
-                        <Image Source="pack://application:,,,/Icons/add.png"/>
+                        <Image Source="pack://application:,,,/Icons/collapseWindowWhite.png"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+
+    </Style>
+
+    <Style TargetType="Button" x:Key="closeWindowButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="MyContentPresenter" 
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"
+                                          />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="False">
+                <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"/>
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Image Source="pack://application:,,,/Icons/closeWindow.png"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"/>
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Image Source="pack://application:,,,/Icons/closeWindowWhite.png"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+
+    </Style>
+
+    <Style TargetType="Button" x:Key="restoreDownButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="MyContentPresenter" 
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"
+                                          />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="False">
+                <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"/>
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Image Source="pack://application:,,,/Icons/restoreDown.png"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"/>
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <Image Source="pack://application:,,,/Icons/restoreDownWhite.png"/>
                     </Setter.Value>
                 </Setter>
             </Trigger>

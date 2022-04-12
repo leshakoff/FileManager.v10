@@ -14,7 +14,7 @@
         AllowsTransparency="True"
         WindowStyle="None">
 
-    <Grid x:Name="mainWindow">
+    <Grid x:Name="mainWindow" MouseLeftButtonDown="DragNDropWindow">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.07*"></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -43,17 +43,9 @@
             
 
             <TextBlock Margin="16,4,0,0" Grid.Column="0" FontSize="16" FontFamily="Segoe UI" FontWeight="Bold">FileManager</TextBlock>
-            <Button Grid.Column="1" BorderBrush="{x:Null}" Style="{StaticResource collapseButton}"></Button>
-            <Button Grid.Column="2" BorderBrush="{x:Null}" >
-                <Button.Background>
-                    <ImageBrush ImageSource="pack://application:,,,/Icons/restoreDown.png"/>
-                </Button.Background>
-            </Button>
-            <Button Grid.Column="3" BorderBrush="{x:Null}">
-                <Button.Background>
-                    <ImageBrush ImageSource="pack://application:,,,/Icons/closeWindow.png"/>
-                </Button.Background>
-            </Button>
+            <Button Grid.Column="1" BorderBrush="{x:Null}" Style="{StaticResource collapseButton}" Click="CollapseWindow"/>
+            <Button Grid.Column="2" BorderBrush="{x:Null}" Style="{StaticResource restoreDownButton}" Click="RestoreWindow" />
+            <Button Grid.Column="3" BorderBrush="{x:Null}" Style="{StaticResource closeWindowButton}" Click="CloseWindow" />
         </Grid>
         
 

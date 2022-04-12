@@ -8,10 +8,15 @@
 
   <ItemGroup>
     <None Remove="Icons\add.png" />
+    <None Remove="Icons\addWhite.png" />
     <None Remove="Icons\closeWindow.png" />
+    <None Remove="Icons\closeWindowWhite.png" />
     <None Remove="Icons\collapseWindow.png" />
+    <None Remove="Icons\collapseWindowWhite.png" />
     <None Remove="Icons\delete.png" />
+    <None Remove="Icons\deleteWhite.png" />
     <None Remove="Icons\restoreDown.png" />
+    <None Remove="Icons\restoreDownWhite.png" />
     <None Remove="Icons\spinner.gif" />
   </ItemGroup>
 
@@ -27,10 +32,15 @@
 
   <ItemGroup>
     <Resource Include="Icons\add.png" />
+    <Resource Include="Icons\addWhite.png" />
     <Resource Include="Icons\closeWindow.png" />
+    <Resource Include="Icons\closeWindowWhite.png" />
     <Resource Include="Icons\collapseWindow.png" />
+    <Resource Include="Icons\collapseWindowWhite.png" />
     <Resource Include="Icons\delete.png" />
+    <Resource Include="Icons\deleteWhite.png" />
     <Resource Include="Icons\restoreDown.png" />
+    <Resource Include="Icons\restoreDownWhite.png" />
     <Resource Include="Icons\spinner.gif" />
   </ItemGroup>
 
