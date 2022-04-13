@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:classes="clr-namespace:FileManager.v10.Models"
         xmlns:local="clr-namespace:FileManager.v10"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         
         Title="MainWindow" 
@@ -154,7 +155,9 @@
             Minimum="0" Maximum="100"
             Name="pbStatus" />
 
-                <DataGrid CanUserAddRows="False" 
+            <fa:ImageAwesome x:Name="spinnerGif" Icon="Spinner" Spin="True" Height="48" Width="48" SpinDuration="3" Visibility="Collapsed" />
+
+            <DataGrid CanUserAddRows="False" 
                       x:Name="dataGrid" 
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 

@@ -17,10 +17,10 @@
     <None Remove="Icons\deleteWhite.png" />
     <None Remove="Icons\restoreDown.png" />
     <None Remove="Icons\restoreDownWhite.png" />
-    <None Remove="Icons\spinner.gif" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
 
@@ -41,7 +41,6 @@
     <Resource Include="Icons\deleteWhite.png" />
     <Resource Include="Icons\restoreDown.png" />
     <Resource Include="Icons\restoreDownWhite.png" />
-    <Resource Include="Icons\spinner.gif" />
   </ItemGroup>
 
 </Project>
