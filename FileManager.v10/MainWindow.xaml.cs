@@ -23,25 +23,34 @@ namespace FileManager.v10
 {
     public partial class MainWindow : Window
     {
-        private Thread _backgroundWorkerThread;
-        public TimeSpan stopwatch;
-        public long quantity;
-        bool MainWindowState = false;
-        public string Reason = "";
+        private Thread backgroundWorkerThread;         // Thread используется в небольшом костыле, 
+                                                       // предзназначенном для отмены поиска, который
+                                                       // мы выполняем в методе DoWork бэкграундворкера.
+                                                       // Так как у самого BakcgroundWorker-а 
+                                                       // отмена задачи работает не очень удобно, 
+                                                       // мы используем эдакий костыль в виде 
+                                                       // присвоения работы бэкграундворкера обычному 
+                                                       // экземпляру класса Thread, у которого мы можем
+                                                       // вызвать метод Interrupt, позволяющий нам прервать 
+                                                       // работу потока. 
+
+        public TimeSpan stopwatch;                      // глобальная переменная, в которую мы можем записать
+                                                        // время, за которое осуществился поиск. 
+
+        public long quantity;                           // глобальная переменная для записи количества
+                                                        // найденных файлов. Почему глобально? Потому что из
+                                                        // BackgroundWorker-а, в котором сам поиск осуществляется, 
+                                                        // невозможно работать с UI-элементами напрямую. 
+                                                        // Поэтому мы временно сохраняем эти значения, 
+                                                        // и затем используем их в UI в основном потоке. 
+
+        bool mainWindowState = false;                   // "переключатель" для корректной работы кнопки 
+                                                        // "развернуть" окно. По умолчанию - false; 
+                                                        // если окно развёрнуто - true.
 
 
-        public List<FileAbout> aboutAll = new List<FileAbout>();
-        public class WorkerParam
-        {
-            public string param;
-            public string sourcePath;
-
-            public WorkerParam(string p, string source)
-            {
-                param = p;
-                sourcePath = source;
-            }
-        }
+        public List<FileAbout> aboutAll = new List<FileAbout>();    // временный список, в котором мы будем хранить
+                                                                    // найденные файлы/папки из BackgroundWorkera. 
 
         public BackgroundWorker worker = new BackgroundWorker();
 
@@ -59,8 +68,10 @@ namespace FileManager.v10
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SearchCompleted);
             worker.WorkerSupportsCancellation = true;
 
-        }
+            if (dataGrid.Items.Count > 0)
+                dataGrid.Visibility = Visibility.Visible;
 
+        }
 
         private void OpenInExplorer(object sender, MouseButtonEventArgs e)
         {
@@ -79,11 +90,16 @@ namespace FileManager.v10
 
                 // v вот это нужно делегировать другому потоку, а пока он выполняется, 
                 // нужно добавить какое-то отображение выполняемого прогресса
+
                 dataGrid.ItemsSource = MainController.GetList(path);
+
                 if (dataGrid.Items.Count == 0)
                     Boop.Text = "Ничего не найдено.";
             }
-
+            if (dataGrid.Items.Count > 0)
+                dataGrid.Visibility = Visibility.Visible;
+            else
+                dataGrid.Visibility = Visibility.Collapsed;
         }
 
         private void StartSearch(object sender, RoutedEventArgs e)
@@ -91,11 +107,11 @@ namespace FileManager.v10
             btnClick.IsEnabled = false;
             cancelSearchButton.IsEnabled = true;
             pbStatus.Visibility = Visibility.Visible;
-            WorkerParam wp = new WorkerParam(BoopIsto.Text, searchLocation.SelectedItem
+            WorkerParam wp = new WorkerParam(searchString.Text, searchLocation.SelectedItem
                 .ToString()
                 .Replace("System.Windows.Controls.ComboBoxItem: ", ""));
             if (!worker.IsBusy) worker.RunWorkerAsync(wp);
-            Boop.Text = $"Выполняется поиск в {wp.sourcePath} по запросу: {BoopIsto.Text}...";
+            Boop.Text = $"Выполняется поиск в {wp.sourcePath} по запросу: {searchString.Text}...";
             pbStatus.IsIndeterminate = true;
 
         }
@@ -120,13 +136,19 @@ namespace FileManager.v10
 
             pbStatus.IsIndeterminate = false;
             pbStatus.Visibility = Visibility.Hidden;
+
+            if (dataGrid.Items.Count > 0)
+                dataGrid.Visibility = Visibility.Visible;
+            else
+                dataGrid.Visibility = Visibility.Collapsed;
+
         }
 
         private void Search(object sender, DoWorkEventArgs e)
         {
             try
             {
-                _backgroundWorkerThread = Thread.CurrentThread;
+                backgroundWorkerThread = Thread.CurrentThread;
 
                 Stopwatch sp = new Stopwatch();
                 sp.Start();
@@ -136,9 +158,6 @@ namespace FileManager.v10
                 {
                     string search = $"*{wp.param}*";
                     string path = wp.sourcePath;
-
-
-                    List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
                     Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(path, search);
 
@@ -154,11 +173,11 @@ namespace FileManager.v10
                 {
                     SearchStringIsEmpty();
                 }
-                
+
             }
             catch (ThreadInterruptedException)
             {
-                
+
             }
 
         }
@@ -170,8 +189,8 @@ namespace FileManager.v10
 
         private void SearchStringChanged(object sender, TextChangedEventArgs e)
         {
-            if (!String.IsNullOrEmpty(BoopIsto.Text)
-                && !String.IsNullOrWhiteSpace(BoopIsto.Text)
+            if (!String.IsNullOrEmpty(searchString.Text)
+                && !String.IsNullOrWhiteSpace(searchString.Text)
                 && !worker.IsBusy)
             {
                 btnClick.IsEnabled = true;
@@ -195,7 +214,7 @@ namespace FileManager.v10
 
         private void CancelSearchClick(object sender, RoutedEventArgs e)
         {
-            if (_backgroundWorkerThread != null) _backgroundWorkerThread.Interrupt();
+            if (backgroundWorkerThread != null) backgroundWorkerThread.Interrupt();
             Boop.Text = "Поиск был прерван пользователем";
             pbStatus.Visibility = Visibility.Hidden;
             btnClick.IsEnabled = true;
@@ -215,21 +234,36 @@ namespace FileManager.v10
 
         private void RestoreWindow(object sender, RoutedEventArgs e)
         {
-            if (!MainWindowState)
+            if (!mainWindowState)
             {
                 Application.Current.MainWindow.WindowState = WindowState.Maximized;
-                MainWindowState = true;
+                mainWindowState = true;
             }
             else
             {
                 Application.Current.MainWindow.WindowState = WindowState.Normal;
-                MainWindowState = false;
+                mainWindowState = false;
             }
         }
 
         private void DragNDropWindow(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            try
+            {
+                this.DragMove();
+            }
+            catch
+            { }
+            
+        }
+
+        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dataGrid.SelectedItem != null)
+            {
+                string path = (dataGrid.SelectedItem as FileAbout).FullPath;
+                MainController.OpenInWinExplorer(path);
+            }
         }
     }
 

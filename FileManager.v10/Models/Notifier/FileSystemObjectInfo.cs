@@ -14,13 +14,16 @@ namespace FileManager.v10.Models
     {
         public FileSystemObjectInfo(FileSystemInfo info)
         {
-            if (this is DummyFileSystemObjectInfo) return;
+            if (this is BranchFileSystemObjectInfo) return;
+
             this.Children = new ObservableCollection<FileSystemObjectInfo>();
+
             this.FileSystemInfo = info;
+
             if (info is DirectoryInfo)
             {
                 this.ImageSource = FolderManager.GetImageSource(info.FullName, ItemState.Close);
-                this.AddDummy();
+                this.AddBranch();
             }
             else if (info is FileInfo)
             {
@@ -35,7 +38,13 @@ namespace FileManager.v10.Models
             this.Drive = drive;
         }
 
-        #region Properties
+
+        // свойства:
+        // коллекция "детей"/"веток"; 
+        // изображение;
+        // IsExpanded, развёрнуто или свёрнуто;
+        // FileSystemInfo для обработки объекта FileInfo или DirectoryInfo
+        // Drive, в том случае, если в данный момент мы просматриваем диск
 
         public ObservableCollection<FileSystemObjectInfo> Children
         {
@@ -67,31 +76,47 @@ namespace FileManager.v10.Models
             set { base.SetValue("Drive", value); }
         }
 
-        #endregion
 
-        #region Methods
 
-        private void AddDummy()
+
+        /// <summary>
+        /// Добавляет объект в коллекцию дочерних элементов ("Children")
+        /// </summary>
+        private void AddBranch()
         {
-            this.Children.Add(new DummyFileSystemObjectInfo());
+            this.Children.Add(new BranchFileSystemObjectInfo());
         }
 
-        private bool HasDummy()
+
+        /// <summary>
+        /// Проверяет наличие объекта в свойстве Children
+        /// </summary>
+        /// <returns></returns>
+        private bool HasBranch()
         {
-            return !object.ReferenceEquals(this.GetDummy(), null);
+            return !object.ReferenceEquals(this.GetBranch(), null);
         }
 
-        private DummyFileSystemObjectInfo GetDummy()
+        /// <summary>
+        /// Возвращает текущий добавленный объект BranchFileSystemObjectInfo
+        /// </summary>
+        /// <returns></returns>
+        private BranchFileSystemObjectInfo GetBranch()
         {
-            var list = this.Children.OfType<DummyFileSystemObjectInfo>().ToList();
+            var list = this.Children.OfType<BranchFileSystemObjectInfo>().ToList();
             if (list.Count > 0) return list.First();
             return null;
         }
 
-        private void RemoveDummy()
+        /// <summary>
+        /// Удаляет объект BranchFileSystemObjectInfo, который уже был добавлен в свойство Children 
+        /// </summary>
+        private void RemoveBranch()
         {
-            this.Children.Remove(this.GetDummy());
+            this.Children.Remove(this.GetBranch());
         }
+
+
 
         private void ExploreDirectories()
         {
@@ -116,7 +141,7 @@ namespace FileManager.v10.Models
             }
             catch
             {
-                /*throw;*/
+               
             }
         }
 
@@ -143,12 +168,15 @@ namespace FileManager.v10.Models
             }
             catch
             {
-                /*throw;*/
+                
             }
         }
 
-        #endregion
-
+        /// <summary>
+        /// Обработчик события PropertyChanged
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void FileSystemObjectInfo_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (this.FileSystemInfo is DirectoryInfo)
@@ -158,9 +186,9 @@ namespace FileManager.v10.Models
                     if (this.IsExpanded)
                     {
                         this.ImageSource = FolderManager.GetImageSource(this.FileSystemInfo.FullName, ItemState.Open);
-                        if (this.HasDummy())
+                        if (this.HasBranch())
                         {
-                            this.RemoveDummy();
+                            this.RemoveBranch();
                             this.ExploreDirectories();
                             this.ExploreFiles();
                         }

@@ -6,6 +6,9 @@ using System.Windows.Media.Imaging;
 
 namespace FileManager.v10
 {
+    /// <summary>
+    /// Класс, описывающий файл, либо папку, для отображения в датагриде. 
+    /// </summary>
     public class FileAbout
     {
         public string Name { get; set; }

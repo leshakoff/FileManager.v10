@@ -7,6 +7,7 @@ namespace FileManager.v10
 {
     public static class Interop
     {
+
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, out SHFileInfo psfi, uint cbFileInfo, uint uFlags);
 

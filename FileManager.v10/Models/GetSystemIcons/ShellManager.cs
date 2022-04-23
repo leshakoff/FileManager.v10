@@ -28,6 +28,7 @@ namespace FileManager.v10
             var shfi = new SHFileInfo();
             var res = Interop.SHGetFileInfo(path, attribute, out shfi, (uint)Marshal.SizeOf(shfi), flags);
             if (object.Equals(res, IntPtr.Zero)) throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+
             try
             {
                 Icon.FromHandle(shfi.hIcon);

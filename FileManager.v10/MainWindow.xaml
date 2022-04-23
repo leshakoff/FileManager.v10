@@ -102,7 +102,7 @@
 
                 <StackPanel Orientation="Horizontal">
 
-                    <TextBox x:Name="BoopIsto" 
+                    <TextBox x:Name="searchString" 
                      Width="250" 
                      TextChanged="SearchStringChanged" />
                     
@@ -157,7 +157,8 @@
 
             <fa:ImageAwesome x:Name="spinnerGif" Icon="Spinner" Spin="True" Height="48" Width="48" SpinDuration="3" Visibility="Collapsed" />
 
-            <DataGrid CanUserAddRows="False" 
+            <DataGrid Visibility="Collapsed"
+                      CanUserAddRows="False" 
                       x:Name="dataGrid" 
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 
@@ -169,7 +170,11 @@
                       Background="{StaticResource backgroundBrush}"
                       Foreground="#cdcdcd"
                       CellStyle="{StaticResource CellStyleWithPadding}"
+                      MouseDoubleClick="dataGrid_MouseDoubleClick"
                       RowHeaderWidth="0"
+                      EnableRowVirtualization="True" 
+                      EnableColumnVirtualization="True" 
+                      ScrollViewer.CanContentScroll="True"
 
                       >
 
@@ -208,7 +213,15 @@
                                         Width="*"
                                         
                                         />
-                        <DataGridTextColumn Header="Расширение" 
+
+                    <DataGridTextColumn Header="Полный путь" 
+                                        Binding="{Binding FullPath}"
+                                        Foreground="{StaticResource foregroundBrush}"
+                                        Width="*"
+                                        
+                                        />
+
+                    <DataGridTextColumn Header="Расширение" 
                                         Binding="{Binding Extension}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"

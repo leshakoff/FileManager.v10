@@ -7,9 +7,3 @@
 
 
 
- ПАЛИТРЫ:
-
- https://color.romanuke.com/tsvetovaya-palitra-4185/ - коричневая
- https://color.romanuke.com/tsvetovaya-palitra-3582/ - чёрно-зелёная
- https://color.romanuke.com/tsvetovaya-palitra-3517/ - чёрно-розовая
-
