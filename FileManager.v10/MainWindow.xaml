@@ -128,7 +128,9 @@
 
 
 
-                    <ComboBox x:Name="searchLocation" 
+                    <ComboBox
+                          Width="94"
+                          x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
                           DropDownOpened="GetCurrentSearchLocation">
                         <ComboBoxItem IsSelected="True">
@@ -150,14 +152,14 @@
 
 
             <!-- Текстблок с отображением, что ищется, за сколько отыскалось и тд -->
-            <TextBlock x:Name="Boop" />
+            <TextBlock x:Name="Boop" Margin="6" />
 
             <!-- Прогрессбар -->
             <ProgressBar 
                 Visibility="Hidden"
-                VerticalAlignment="Center"
-                Height="20" Width="600"
-                Minimum="0" Maximum="100"
+                Margin="6"
+                HorizontalAlignment="Stretch"
+                Height="20" Width="Auto"
                 Name="pbStatus" />
 
             <!-- Спиннер, которому не было суждено появиться в программе, 
