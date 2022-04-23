@@ -15,7 +15,8 @@
         AllowsTransparency="True"
         WindowStyle="None">
 
-    <Grid x:Name="mainWindow" MouseLeftButtonDown="DragNDropWindow">
+    <!-- Основной контейнер -->
+        <Grid x:Name="mainWindow" MouseLeftButtonDown="DragNDropWindow">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.07*"></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -26,6 +27,8 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+
+        <!-- Прямоугольник с закруглёнными углами, который выполняет функцию главного окна -->
         <Rectangle x:Name="mainBackground" 
                    Grid.Row="0" 
                    Grid.Column="0" 
@@ -36,34 +39,35 @@
                    Fill="{StaticResource backgroundBrush}" 
                    Height="Auto" Width="Auto" />
 
-        <Grid x:Name="header" 
-              Grid.Row="0" 
-              Grid.Column="0" 
-              Grid.ColumnSpan="2"
-              Background="{StaticResource backgroundForDGHeader}"
-              VerticalAlignment="Top">
+            <!-- Хэдер -->
+            <Grid x:Name="header" 
+                      Grid.Row="0" 
+                      Grid.Column="0" 
+                      Grid.ColumnSpan="2"
+                      Background="{StaticResource backgroundForDGHeader}"
+                      VerticalAlignment="Top">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="0.034*"></ColumnDefinition>
-                <ColumnDefinition Width="0.034*"></ColumnDefinition>
-                <ColumnDefinition Width="0.034*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="0.034*"></ColumnDefinition>
+                        <ColumnDefinition Width="0.034*"></ColumnDefinition>
+                        <ColumnDefinition Width="0.034*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
             
             
 
-            <TextBlock VerticalAlignment="Center" Margin="16,4,0,0" Grid.Column="0" FontSize="16" FontFamily="Segoe UI" FontWeight="Bold">FileManager</TextBlock>
-            <Button Grid.Column="1" BorderBrush="{x:Null}" Style="{StaticResource collapseButton}" Click="CollapseWindow"/>
-            <Button Grid.Column="2" BorderBrush="{x:Null}" Style="{StaticResource restoreDownButton}" Click="RestoreWindow" />
-            <Button Grid.Column="3" BorderBrush="{x:Null}" Style="{StaticResource closeWindowButton}" Click="CloseWindow" />
-        </Grid>
-        
+                    <TextBlock VerticalAlignment="Center" Margin="16,4,0,0" Grid.Column="0" FontSize="16" FontFamily="Segoe UI" FontWeight="Bold">FileManager</TextBlock>
+                    <Button Grid.Column="1" BorderBrush="{x:Null}" Style="{StaticResource collapseButton}" Click="CollapseWindow"/>
+                    <Button Grid.Column="2" BorderBrush="{x:Null}" Style="{StaticResource restoreDownButton}" Click="RestoreWindow" />
+                    <Button Grid.Column="3" BorderBrush="{x:Null}" Style="{StaticResource closeWindowButton}" Click="CloseWindow" />
+                </Grid>
 
-            <TreeView Name="treeView" 
+        <!-- Дерево файлов и папок -->
+        <TreeView Name="treeView" 
                       Grid.Row="1"
                       Grid.Column="0"
                   Margin="5" 
@@ -90,17 +94,17 @@
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
-        
-        
-            <StackPanel Grid.Row="1" Grid.Column="2" Margin="12">
 
-                <TextBlock
-                Margin="6"
-                Text="Введите название файла/папки или расширение в формате .txt"
-                Width="400"
-                Foreground="{StaticResource foregroundBrush}"/>
+        <!-- Основное рабочее пространство -->
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="12">
 
-                <StackPanel Orientation="Horizontal">
+            <TextBlock
+                    Margin="6"
+                    Text="Введите название файла/папки или расширение в формате .txt"
+                    Width="400"
+                    Foreground="{StaticResource foregroundBrush}"/>
+
+            <StackPanel Orientation="Horizontal">
 
                     <TextBox x:Name="searchString" 
                      Width="250" 
@@ -145,18 +149,24 @@
                 </StackPanel>
 
 
+            <!-- Текстблок с отображением, что ищется, за сколько отыскалось и тд -->
+            <TextBlock x:Name="Boop" />
 
-                <TextBlock x:Name="Boop" />
+            <!-- Прогрессбар -->
+            <ProgressBar 
+                Visibility="Hidden"
+                VerticalAlignment="Center"
+                Height="20" Width="600"
+                Minimum="0" Maximum="100"
+                Name="pbStatus" />
 
-                <ProgressBar 
-            Visibility="Hidden"
-            VerticalAlignment="Center"
-            Height="20" Width="400"
-            Minimum="0" Maximum="100"
-            Name="pbStatus" />
-
+            <!-- Спиннер, которому не было суждено появиться в программе, 
+                 потому что я так и не вывела отображение файлов и папок в датагрид 
+                 в отдельный поток... -->
             <fa:ImageAwesome x:Name="spinnerGif" Icon="Spinner" Spin="True" Height="48" Width="48" SpinDuration="3" Visibility="Collapsed" />
 
+            <!-- Датагрид, в котором отображаются файлы/папки, содержащиеся в элементе дерева
+                 или найденные по поиску -->
             <DataGrid Visibility="Collapsed"
                       CanUserAddRows="False" 
                       x:Name="dataGrid" 
@@ -214,14 +224,14 @@
                                         
                                         />
 
-                    <DataGridTextColumn Header="Полный путь" 
+                        <DataGridTextColumn Header="Полный путь" 
                                         Binding="{Binding FullPath}"
                                         Foreground="{StaticResource foregroundBrush}"
                                         Width="*"
                                         
                                         />
 
-                    <DataGridTextColumn Header="Расширение" 
+                        <DataGridTextColumn Header="Расширение" 
                                         Binding="{Binding Extension}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"
