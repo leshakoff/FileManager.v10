@@ -98,18 +98,22 @@
         <!-- Основное рабочее пространство -->
         <StackPanel Grid.Row="1" Grid.Column="2" Margin="12">
 
+            <!-- Подсказка (введите название файла/папки...) -->
             <TextBlock
                     Margin="6"
                     Text="Введите название файла/папки или расширение в формате .txt"
                     Width="400"
                     Foreground="{StaticResource foregroundBrush}"/>
 
+            <!-- Панель с тексбоксом поиска, кнопками и локацией поиска -->
             <StackPanel Orientation="Horizontal">
 
+                <!-- Поле для ввода поиска -->
                     <TextBox x:Name="searchString" 
                      Width="250" 
                      TextChanged="SearchStringChanged" />
-                    
+                
+                    <!-- Кнопка старта поиска -->
                     <Border BorderBrush="{StaticResource borderForBrush}" BorderThickness="1">
                         <Button Content="SEARCH!"
                                 Click="StartSearch" 
@@ -118,6 +122,7 @@
                                 Style="{StaticResource buttonGreen}" />
                     </Border>
 
+                    <!-- Кнопка остановки поиска -->
                     <Border  BorderBrush="{StaticResource borderForBrush}" BorderThickness="1" >
                     <Button Content="STOP SEARCH" 
                                 Click="CancelSearchClick"
@@ -127,29 +132,39 @@
 
 
 
-
-                    <ComboBox
+                <!-- Локация поиска -->
+                <ComboBox
                           Width="94"
                           x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
                           DropDownOpened="GetCurrentSearchLocation">
-                        <ComboBoxItem IsSelected="True">
-                            <TextBlock>C:\</TextBlock>
-                        </ComboBoxItem>
-                        <ComboBoxItem>
-                            <TextBlock>D:\</TextBlock>
-                        </ComboBoxItem>
-                        <ComboBoxItem Name="currentFolderCombobox" Visibility="Collapsed">
-                            <TextBlock x:Name="currentFolder"></TextBlock>
-                        </ComboBoxItem>
-                    </ComboBox>
+                    <ComboBoxItem IsSelected="True">
+                        <TextBlock>C:\</TextBlock>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock>D:\</TextBlock>
+                    </ComboBoxItem>
+                    <ComboBoxItem Name="currentFolderCombobox" Visibility="Collapsed">
+                        <TextBlock x:Name="currentFolder"></TextBlock>
+                    </ComboBoxItem>
+                </ComboBox>
 
+            </StackPanel>
 
+            <!-- Панель с кнопками операций над файлами -->
+                <StackPanel Orientation="Horizontal">
+                <Button x:Name="createFileBtn" Click="CreateFile" IsEnabled="False">Создать</Button>
+                <Button x:Name="renameFileBtn" Click="RenameFile" IsEnabled="False">Переименовать</Button>
+                <Button x:Name="copyFileBtn" Click="CopyFile" IsEnabled="False">Копировать</Button>
+                <Button x:Name="deleteFileBtn" Click="DeleteFile" IsEnabled="False">Удалить</Button>
 
+                <Button x:Name="readFileBtn" Click="ReadFile" IsEnabled="False">Читать</Button>
+                <Button x:Name="editFileBtn" Click="EditFile" IsEnabled="False">Редактировать</Button>
 
-
-                </StackPanel>
-
+                <Button x:Name="playMediaFileBtn" Click="PlayMediaFile" IsEnabled="False">Воспроизвести</Button>
+                <Button x:Name="pauseMediaFileBtn" Click="PauseMediaFile" IsEnabled="False">Пауза</Button>
+                <Button x:Name="stopMediaFileBtn" Click="StopMediaFile" IsEnabled="False">Стоп</Button>
+            </StackPanel>
 
             <!-- Текстблок с отображением, что ищется, за сколько отыскалось и тд -->
             <TextBlock x:Name="Boop" Margin="6" />
@@ -182,7 +197,7 @@
                       Background="{StaticResource backgroundBrush}"
                       Foreground="#cdcdcd"
                       CellStyle="{StaticResource CellStyleWithPadding}"
-                      MouseDoubleClick="dataGrid_MouseDoubleClick"
+                      MouseDoubleClick="DataGrid_MouseDoubleClick"
                       RowHeaderWidth="0"
                       EnableRowVirtualization="True" 
                       EnableColumnVirtualization="True" 
@@ -252,7 +267,9 @@
                                         Width="Auto"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
+
+            <MediaElement x:Name="mediaElement"></MediaElement>
+        </StackPanel>
 
     </Grid>
 
