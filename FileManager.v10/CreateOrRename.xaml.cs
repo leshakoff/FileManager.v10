@@ -50,7 +50,7 @@ namespace FileManager.v10
 
             if (!String.IsNullOrEmpty(nameOfFile.Text) && !String.IsNullOrWhiteSpace(nameOfFile.Text))
             {
-                if (currentFileFromTree == null && currentFileFromDataGrid == null)
+                if (currentFileFromTree == null && currentFileFromDataGrid.FullPath == null)
                 {
                     NamesFromAnotherWindow.name = nameOfFile.Text;
                     if (radioFile.IsChecked == true) NamesFromAnotherWindow.extension = (int)TypesForCreationFile.File;

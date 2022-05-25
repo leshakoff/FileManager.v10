@@ -213,5 +213,19 @@ namespace FileManager.v10
             var exp = (int)(Math.Log(size) / Math.Log(unit));
             return $"{size / Math.Pow(unit, exp):F2} {("KMGTPE")[exp - 1]}B";
         }
+
+        public static void CopyDirectory(string sourcePath, string targetPath)
+        {
+            Directory.CreateDirectory(targetPath);
+            foreach (string s1 in Directory.GetFiles(sourcePath))
+            {
+                string s2 = targetPath + "\\" + Path.GetFileName(s1);
+                File.Copy(s1, s2);
+            }
+            foreach (string s in Directory.GetDirectories(sourcePath))
+            {
+                CopyDirectory(s, targetPath + "\\" + Path.GetFileName(s));
+            }
+        }
     }
 }

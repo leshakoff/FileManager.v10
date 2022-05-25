@@ -198,11 +198,11 @@
                       Foreground="#cdcdcd"
                       CellStyle="{StaticResource CellStyleWithPadding}"
                       MouseDoubleClick="DataGrid_MouseDoubleClick"
+                      MouseLeftButtonUp="CheckElementExtension"
                       RowHeaderWidth="0"
                       EnableRowVirtualization="True" 
                       EnableColumnVirtualization="True" 
                       ScrollViewer.CanContentScroll="True"
-
                       >
 
                     <DataGrid.ColumnHeaderStyle>
@@ -218,8 +218,8 @@
 
                     <DataGrid.RowStyle>
                         <Style TargetType="{x:Type DataGridRow}">
-                            <Setter Property="Background" Value="{StaticResource backgroundBrush}" />
-                        </Style>
+                        <Setter Property="Background" Value="{StaticResource backgroundBrush}" />
+                    </Style>
                     </DataGrid.RowStyle>
 
                     <DataGrid.Columns>

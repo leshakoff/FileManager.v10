@@ -19,6 +19,7 @@ using FileManager.v10.Models;
 using FastSearchLibrary;
 using System.Threading;
 using static FileManager.v10.NamesFromAnotherWindow;
+using System.Text.RegularExpressions;
 
 namespace FileManager.v10
 {
@@ -296,35 +297,50 @@ namespace FileManager.v10
                 create.Owner = this;
                 create.ShowDialog();
 
-                if (NamesFromAnotherWindow.extension == (int)TypesForCreationFile.Folder)
+                try
                 {
-                    if (Directory.Exists(path))
+                    if (NamesFromAnotherWindow.extension == (int)TypesForCreationFile.Folder)
                     {
-                        Directory.CreateDirectory(path + @"\" + NamesFromAnotherWindow.name);
-                        ShowMessageBox("Папка", path + @"\" + NamesFromAnotherWindow.name, "создана");
+                        if (Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path + @"\" + NamesFromAnotherWindow.name);
+                            ShowMessageBox("Папка", path + @"\" + NamesFromAnotherWindow.name, "создана");
+                        }
+                        else
+                        {
+                            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name);
+                            ShowMessageBox("Папка",
+                                System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name,
+                                "создана");
+                        }
                     }
                     else
                     {
-                        Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name);
-                        ShowMessageBox("Папка",
-                            System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name,
-                            "создана");
+                        if (Directory.Exists(path))
+                        {
+                            var file = File.Create(path + @"\" + NamesFromAnotherWindow.name);
+                            file.Close();
+                            ShowMessageBox("Файл", path + @"\" + NamesFromAnotherWindow.name, "создан");
+                        }
+                        else
+                        {
+                            string newPath = System.IO.Path.GetDirectoryName(path);
+                            var file = File.Create(newPath + @"\" + NamesFromAnotherWindow.name);
+                            file.Close();
+                            ShowMessageBox("Файл", newPath + @"\" + NamesFromAnotherWindow.name, "создан");
+                        }
                     }
                 }
-                else
+                catch (PathTooLongException)
                 {
-                    if (Directory.Exists(path))
-                    {
-                        var file = File.Create(path + @"\" + NamesFromAnotherWindow.name);
-                        file.Close();
-                        ShowMessageBox("Файл", path + @"\" + NamesFromAnotherWindow.name, "создан");
-                    }
-                    else
-                    {
-                        var file = File.Create(System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name);
-                        file.Close();
-                        ShowMessageBox("Файл", System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name, "создан");
-                    }
+                    MessageBox.Show("Название файла/папки слишком длинное, " +
+                        "создать файл/папку не удалось.", "Ошибка создания файла/папки",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Cоздать файл/папку не удалось. {ex.Message}", "Ошибка создания файла/папки",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
             }
@@ -343,48 +359,179 @@ namespace FileManager.v10
                 CreateOrRename create;
 
                 string path = "";
-                if (dataGrid.SelectedItem == null)
+                try
                 {
-                    path = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
-                    create = new CreateOrRename("Введите новое имя файла или папки",
-                            (treeView.SelectedItem as FileSystemObjectInfo));
-                }
-                else
-                {
-                    path = (dataGrid.SelectedItem as FileAbout).FullPath;
-                    create = new CreateOrRename("Введите новое имя файла или папки",
-                            (dataGrid.SelectedItem as FileAbout));
-                }
+                    if (dataGrid.SelectedItem == null)
+                    {
+                        path = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+                        create = new CreateOrRename("Введите новое имя файла или папки",
+                                (treeView.SelectedItem as FileSystemObjectInfo));
+                    }
+                    else
+                    {
+                        path = (dataGrid.SelectedItem as FileAbout).FullPath;
+                        create = new CreateOrRename("Введите новое имя файла или папки",
+                                (dataGrid.SelectedItem as FileAbout));
+                    }
 
 
-                create.Owner = this;
-                create.ShowDialog();
+                    create.Owner = this;
+                    create.ShowDialog();
 
-                if (NamesFromAnotherWindow.extension == (int)TypesForCreationFile.Folder)
-                {
-                    string newPath = System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name;
-                    Directory.Move(path, newPath);
-                    ShowMessageBox("Папка",
-                        System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name,
-                        "переименована");
+                    if (NamesFromAnotherWindow.extension == (int)TypesForCreationFile.Folder)
+                    {
+                        string newPath = System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name;
+                        Directory.Move(path, newPath);
+                        ShowMessageBox("Папка",
+                            System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name,
+                            "переименована");
+                    }
+                    else
+                    {
+                        string newPath = System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name;
+                        File.Move(path, newPath);
+                        ShowMessageBox("Файл", path + @"\" + NamesFromAnotherWindow.name, "переименован");
+                    }
                 }
-                else
+                catch
                 {
-                    string newPath = System.IO.Path.GetDirectoryName(path) + @"\" + NamesFromAnotherWindow.name;
-                    File.Move(path, newPath);
-                    ShowMessageBox("Файл", path + @"\" + NamesFromAnotherWindow.name, "переименован");
+                    MessageBox.Show("Переименовать файл/папку не удалось.", "Ошибка переименования файла/папки",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
 
             }
         }
 
         private void CopyFile(object sender, RoutedEventArgs e)
         {
+            if (treeView.SelectedItem != null)
+            {
 
+                string path = "";
+                string fileName = "";
+                string extension = "";
+                try
+                {
+                    if (dataGrid.SelectedItem == null)
+                    {
+                        path = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+                        fileName = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.Name;
+                        extension = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.Extension;
+                    }
+                    else
+                    {
+                        path = (dataGrid.SelectedItem as FileAbout).FullPath;
+                        fileName = (dataGrid.SelectedItem as FileAbout).Name;
+                        extension = (dataGrid.SelectedItem as FileAbout).Extension;
+                    }
+
+                    int index = 0;
+
+                    Regex r = new Regex(@"\([\d]+\)");
+                    MatchCollection matches = r.Matches(fileName);
+                    if (matches.Count > 0)
+                    {
+                        Match m = matches[matches.Count - 1];
+                        index = Int32.Parse(m.Value.Trim('.', ')', '('));
+                    }
+
+                    if (index != 0)
+                    {
+                        if (Directory.Exists(path))
+                        {
+                            string newName = fileName.Replace($"({index})", "");
+                            newName += $"({++index})";
+                            MainController.CopyDirectory($"{path}", $"{System.IO.Path.GetDirectoryName(path)}\\{newName}");
+                            ShowMessageBox("Папка", path, "скопирована");
+                        }
+                        else if (File.Exists(path))
+                        {
+                            string newName = System.IO.Path.GetFileNameWithoutExtension(path);
+                            newName = newName.Replace($"({index})", "");
+                            newName += $"({++index}){extension}";
+                            File.Copy(path, $"{System.IO.Path.GetDirectoryName(path)}\\{newName}");
+                            ShowMessageBox("Файл", path, "скопирован");
+                        }
+                    }
+                    else
+                    {
+                        if (Directory.Exists(path))
+                        {
+                            MainController.CopyDirectory($"{path}", $"{path}({++index})");
+                            ShowMessageBox("Папка", path, "скопирована");
+                        }
+                        else if (File.Exists(path))
+                        {
+                            File.Copy(path, $"{System.IO.Path.GetDirectoryName(path)}" +
+                                $"\\{System.IO.Path.GetFileNameWithoutExtension(path)}" +
+                                $"({++index})" +
+                                $"{extension}");
+                            ShowMessageBox("Файл", path, "скопирован");
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Копировать файл/папку не удалось. {ex.Message}", "Ошибка копирования файла/папки",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void DeleteFile(object sender, RoutedEventArgs e)
         {
+            if (treeView.SelectedItem != null)
+            {
+
+                string path = "";
+                try
+                {
+                    if (dataGrid.SelectedItem == null)
+                    {
+                        path = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+
+                    }
+                    else
+                    {
+                        path = (dataGrid.SelectedItem as FileAbout).FullPath;
+                    }
+
+                    if (Directory.Exists(path))
+                    {
+                        bool res = ShowMessageBoxForDeleting(path, "папку");
+                        if (res)
+                        {
+                            Directory.Delete(path, true);
+                            ShowMessageBox("Папка", path, "удалена");
+                        }
+                    }
+                    else if (File.Exists(path))
+                    {
+                        bool res = ShowMessageBoxForDeleting(path, "файл");
+                        if (res)
+                        {
+                            File.Delete(path);
+                            ShowMessageBox("Файл", path, "удалён");
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Удалить файл/папку не удалось. {ex.Message}", "Ошибка удаления файла/папки",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private bool ShowMessageBoxForDeleting(string path, string obj)
+        {
+            MessageBoxResult result = MessageBox.Show($"Вы уверены, что хотите удалить {obj} по пути {path}?",
+                 "Подтвердите удаление", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes) return true;
+            else return false;
 
         }
 
@@ -429,7 +576,44 @@ namespace FileManager.v10
             //copyFileBtn.IsEnabled = false;
         }
 
+        private void CheckElementExtension(object sender, MouseButtonEventArgs e)
+        {
+            string ext = "";
+            if (dataGrid.SelectedItem != null)
+            {
+                
+                ext = (dataGrid.SelectedItem as FileAbout).Extension;
+                MessageBox.Show($"Мы здесь, расширение - {ext}");
 
+                if (ext == ".txt")
+                {
+                    readFileBtn.IsEnabled = true;
+                    editFileBtn.IsEnabled = true;
+
+                    playMediaFileBtn.IsEnabled = false;
+                    pauseMediaFileBtn.IsEnabled = false;
+                    stopMediaFileBtn.IsEnabled = false;
+                }
+                else if (ext == ".mp4")
+                {
+                    playMediaFileBtn.IsEnabled = true;
+                    pauseMediaFileBtn.IsEnabled = true;
+                    stopMediaFileBtn.IsEnabled = true;
+
+                    readFileBtn.IsEnabled = false;
+                    editFileBtn.IsEnabled = false;
+                }
+                else
+                {
+                    readFileBtn.IsEnabled = false;
+                    editFileBtn.IsEnabled = false;
+                    playMediaFileBtn.IsEnabled = false;
+                    pauseMediaFileBtn.IsEnabled = false;
+                    stopMediaFileBtn.IsEnabled = false;
+                }
+            }
+
+        }
     }
 
 }
