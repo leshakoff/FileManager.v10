@@ -52,6 +52,7 @@ namespace FileManager.v10.Models
             private set { base.SetValue("Children", value); }
         }
 
+
         public ImageSource ImageSource
         {
             get { return base.GetValue<ImageSource>("ImageSource"); }

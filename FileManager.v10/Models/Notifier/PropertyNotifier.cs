@@ -35,6 +35,8 @@ namespace FileManager.v10.Models
             set;
         }
 
+     
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (this.AllowRaiseEvent)

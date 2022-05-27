@@ -63,9 +63,6 @@ namespace FileManager.v10
             }
         }
 
-
-
-
         public List<FileAbout> aboutAll = new List<FileAbout>();    // временный список, в котором мы будем хранить
                                                                     // найденные файлы/папки из BackgroundWorkera. 
 
@@ -75,20 +72,101 @@ namespace FileManager.v10
         {
 
             InitializeComponent();
-            var drives = DriveInfo.GetDrives();
-            foreach (var drive in drives)
-            {
-                if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
-            }
+
+            UpdateTreeView();
 
             worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(Search);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SearchCompleted);
             worker.WorkerSupportsCancellation = true;
 
+            CheckDataGridItems();
+
+        }
+
+        private void CheckDataGridItems()
+        {
             if (dataGrid.Items.Count > 0)
                 dataGrid.Visibility = Visibility.Visible;
+            else
+                dataGrid.Visibility = Visibility.Collapsed;
+        }
 
+        private void UpdateTreeView(string pathForExpand = null)
+        {
+            this.treeView.Items.Clear();
+            this.dataGrid.ItemsSource = null;
+            CheckDataGridItems();
+
+            var drives = DriveInfo.GetDrives();
+            foreach (var drive in drives)
+            {
+                if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
+            }
+
+            if (!String.IsNullOrEmpty(pathForExpand))
+            {
+
+                string addSlashes = @"\";
+
+                string[] nodes = pathForExpand.Split('\\');
+
+                for (int k = 0; k < nodes.Length; k++)
+                {
+                    if (k == 0)
+                        nodes[k] += addSlashes;
+                    else
+                    {
+                        nodes[k] = nodes[k - 1].TrimEnd('\\') + addSlashes + nodes[k];
+                    }
+                }
+
+
+                int i = treeView.Items.Count;
+
+                FileSystemObjectInfo mainNode;
+
+                for (int j = 0; j < i; j++)
+                {
+                    if ((treeView.Items[j] as FileSystemObjectInfo).FileSystemInfo.FullName == nodes[0])
+                    {
+                        mainNode = treeView.Items[j] as FileSystemObjectInfo;
+                        mainNode.IsExpanded = true;
+
+                        if (mainNode.Children.Count > 0)
+                        {
+                            if (nodes.Length > 1)
+                            {
+                                FileSystemObjectInfo b = mainNode.Children.First(x => x.FileSystemInfo.FullName == nodes[1]);
+                                b.IsExpanded = true;
+
+                                for (int k = 1; k < nodes.Length; k++)
+                                {
+                                    if (k != nodes.Length - 1)
+                                    {
+                                        ExpandChildren(b, nodes[k + 1]);
+                                    }
+                                    
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    
+                }
+
+            }
+        }
+
+        private void ExpandChildren(FileSystemObjectInfo mainNode, string childrenName)
+        {
+            if (mainNode.Children.Count > 0)
+            {
+                FileSystemObjectInfo b = mainNode.Children.First(x => x.FileSystemInfo.FullName == childrenName);
+                b.IsExpanded = true;
+            }
         }
 
         private void OpenInExplorer(object sender, MouseButtonEventArgs e)
@@ -392,6 +470,8 @@ namespace FileManager.v10
                         File.Move(path, newPath);
                         ShowMessageBox("Файл", path + @"\" + NamesFromAnotherWindow.name, "переименован");
                     }
+
+                    UpdateTreeView(System.IO.Path.GetDirectoryName(path));
                 }
                 catch
                 {
@@ -471,6 +551,8 @@ namespace FileManager.v10
                         }
                     }
 
+                    UpdateTreeView(System.IO.Path.GetDirectoryName(path));
+
                 }
                 catch (Exception ex)
                 {
@@ -516,6 +598,8 @@ namespace FileManager.v10
                             ShowMessageBox("Файл", path, "удалён");
                         }
                     }
+
+                    UpdateTreeView(System.IO.Path.GetDirectoryName(path));
 
                 }
                 catch (Exception ex)
@@ -581,7 +665,7 @@ namespace FileManager.v10
             string ext = "";
             if (dataGrid.SelectedItem != null)
             {
-                
+
                 ext = (dataGrid.SelectedItem as FileAbout).Extension;
                 MessageBox.Show($"Мы здесь, расширение - {ext}");
 
@@ -612,8 +696,8 @@ namespace FileManager.v10
                     stopMediaFileBtn.IsEnabled = false;
                 }
             }
-
         }
+
     }
 
 }
