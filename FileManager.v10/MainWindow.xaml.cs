@@ -70,7 +70,6 @@ namespace FileManager.v10
 
         public MainWindow()
         {
-
             InitializeComponent();
 
             UpdateTreeView();
@@ -81,7 +80,6 @@ namespace FileManager.v10
             worker.WorkerSupportsCancellation = true;
 
             CheckDataGridItems();
-
         }
 
         private void CheckDataGridItems()
@@ -133,28 +131,24 @@ namespace FileManager.v10
                         mainNode = treeView.Items[j] as FileSystemObjectInfo;
                         mainNode.IsExpanded = true;
 
-                        if (mainNode.Children.Count > 0)
+                        if (mainNode.Children.Count > 0 && nodes.Length > 1)
                         {
-                            if (nodes.Length > 1)
+                            FileSystemObjectInfo b = mainNode.Children
+                                .First(x => x.FileSystemInfo.FullName == nodes[1]);
+                            b.IsExpanded = true;
+
+                            for (int k = 1; k < nodes.Length; k++)
                             {
-                                FileSystemObjectInfo b = mainNode.Children.First(x => x.FileSystemInfo.FullName == nodes[1]);
-                                b.IsExpanded = true;
-
-                                for (int k = 1; k < nodes.Length; k++)
+                                if (k != nodes.Length - 1)
                                 {
-                                    if (k != nodes.Length - 1)
-                                    {
-                                        ExpandChildren(b, nodes[k + 1]);
-                                    }
-                                    
+                                    ExpandChildren(b, nodes[k + 1]);
                                 }
-
                             }
 
                         }
 
                     }
-                    
+
                 }
 
             }
@@ -164,8 +158,8 @@ namespace FileManager.v10
         {
             if (mainNode.Children.Count > 0)
             {
-                FileSystemObjectInfo b = mainNode.Children.First(x => x.FileSystemInfo.FullName == childrenName);
-                b.IsExpanded = true;
+                FileSystemObjectInfo childNode = mainNode.Children.First(x => x.FileSystemInfo.FullName == childrenName);
+                childNode.IsExpanded = true;
             }
         }
 
@@ -626,7 +620,9 @@ namespace FileManager.v10
 
         private void EditFile(object sender, RoutedEventArgs e)
         {
-
+            //TextEditor tx = new TextEditor();
+            //tx.Owner = this;
+            //tx.ShowDialog();
         }
 
         private void PlayMediaFile(object sender, RoutedEventArgs e)
