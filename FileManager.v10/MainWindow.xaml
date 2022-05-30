@@ -270,7 +270,6 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-            <MediaElement x:Name="mediaElement"></MediaElement>
         </StackPanel>
 
     </Grid>
