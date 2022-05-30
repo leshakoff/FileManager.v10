@@ -169,9 +169,10 @@
 
             <!-- Датагрид, в котором отображаются файлы/папки, содержащиеся в элементе дерева
                  или найденные по поиску -->
-            <DataGrid Visibility="Collapsed"
+            <DataGrid Visibility="Hidden"
                       CanUserAddRows="False" 
                       x:Name="dataGrid" 
+                      ItemsSource="{Binding Locations}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 
                       Width="Auto" 

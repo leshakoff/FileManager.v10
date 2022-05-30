@@ -1,23 +1,16 @@
-﻿using System;
+﻿using FastSearchLibrary;
+using FileManager.v10.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using FileManager.v10.Models;
-using FastSearchLibrary;
-using System.Threading;
+using System.Windows.Threading;
 
 namespace FileManager.v10
 {
@@ -52,7 +45,14 @@ namespace FileManager.v10
         public List<FileAbout> aboutAll = new List<FileAbout>();    // временный список, в котором мы будем хранить
                                                                     // найденные файлы/папки из BackgroundWorkera. 
 
-        public BackgroundWorker worker = new BackgroundWorker();
+        public List<FileAbout> aboutForDG = new List<FileAbout>();    // временный список, в котором мы будем хранить
+                                                                      // найденные файлы/папки из BackgroundWorkera. 
+
+        //public BackgroundWorker worker = new BackgroundWorker();
+        //public BackgroundWorker workerForGrid = new BackgroundWorker();
+
+        public string pathForDG = "";
+
 
         public MainWindow()
         {
@@ -63,10 +63,19 @@ namespace FileManager.v10
                 if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
             }
 
-            worker = new BackgroundWorker();
-            worker.DoWork += new DoWorkEventHandler(Search);
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SearchCompleted);
-            worker.WorkerSupportsCancellation = true;
+
+            //workerForGrid = new BackgroundWorker();
+            //workerForGrid.DoWork += new DoWorkEventHandler(GetCurrentContent);
+            //workerForGrid.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CurrentContentCompleted);
+
+
+            var model = new IndexViewModel();
+            DataContext = model;
+
+            //worker = new BackgroundWorker();
+            //worker.DoWork += new DoWorkEventHandler(Search);
+            //worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SearchCompleted);
+            //worker.WorkerSupportsCancellation = true;
 
             if (dataGrid.Items.Count > 0)
                 dataGrid.Visibility = Visibility.Visible;
@@ -82,24 +91,76 @@ namespace FileManager.v10
             }
         }
 
+        /*
+        private void GetCurrentContent(object sender, DoWorkEventArgs e)
+        {
+            aboutForDG = MainController.GetList(pathForDG);
+            e.Result = true;
+        }
+      
+
+        private void CurrentContentCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+            //MessageBox.Show("я завершился");
+
+            try
+            {
+                spinnerGif.Visibility = Visibility.Collapsed;
+                dataGrid.ItemsSource = aboutForDG;
+
+                if (dataGrid.Items.Count == 0)
+                    Boop.Text = "Ничего не найдено.";
+
+                if (dataGrid.Items.Count > 0)
+                    dataGrid.Visibility = Visibility.Visible;
+                else
+                    dataGrid.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+        }
+
+
+  */
+
+
         private void GetFilesInCurrentFolder(object sender, MouseButtonEventArgs e)
         {
             if (treeView.SelectedItem != null)
             {
-                string path = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+                pathForDG = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
+                spinnerGif.Visibility = Visibility.Visible;
 
-                // v вот это нужно делегировать другому потоку, а пока он выполняется, 
-                // нужно добавить какое-то отображение выполняемого прогресса
+                (DataContext as IndexViewModel).LoadData(pathForDG).ContinueWith(r =>
+                {
+                    Boop.Text = String.Empty;
+                    spinnerGif.Visibility = Visibility.Collapsed;
 
-                dataGrid.ItemsSource = MainController.GetList(path);
+                    if (dataGrid.Items.Count == 0)
+                        Boop.Text = "Ничего не найдено.";
 
-                if (dataGrid.Items.Count == 0)
-                    Boop.Text = "Ничего не найдено.";
+                    if (dataGrid.Items.Count > 0)
+                        dataGrid.Visibility = Visibility.Visible;
+                    else
+                        dataGrid.Visibility = Visibility.Collapsed;
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+
+
+
+                //if (!workerForGridThread.IsAlive)
+                //    workerForGridThread.Start();
+
+                //if (!workerForGrid.IsBusy) 
+                //    workerForGrid.RunWorkerAsync();
+
+
+
             }
-            if (dataGrid.Items.Count > 0)
-                dataGrid.Visibility = Visibility.Visible;
-            else
-                dataGrid.Visibility = Visibility.Collapsed;
+
         }
 
         private void StartSearch(object sender, RoutedEventArgs e)
@@ -107,10 +168,14 @@ namespace FileManager.v10
             btnClick.IsEnabled = false;
             cancelSearchButton.IsEnabled = true;
             pbStatus.Visibility = Visibility.Visible;
+
             WorkerParam wp = new WorkerParam(searchString.Text, searchLocation.SelectedItem
                 .ToString()
                 .Replace("System.Windows.Controls.ComboBoxItem: ", ""));
-            if (!worker.IsBusy) worker.RunWorkerAsync(wp);
+
+            //if (!worker.IsBusy) 
+            //    worker.RunWorkerAsync(wp);
+
             Boop.Text = $"Выполняется поиск в {wp.sourcePath} по запросу: {searchString.Text}...";
             pbStatus.IsIndeterminate = true;
 
@@ -152,7 +217,6 @@ namespace FileManager.v10
 
                 Stopwatch sp = new Stopwatch();
                 sp.Start();
-                BackgroundWorker bg = sender as BackgroundWorker;
                 WorkerParam wp = (WorkerParam)e.Argument;
                 if (!String.IsNullOrEmpty(wp.param) && !String.IsNullOrWhiteSpace(wp.param))
                 {
@@ -191,7 +255,7 @@ namespace FileManager.v10
         {
             if (!String.IsNullOrEmpty(searchString.Text)
                 && !String.IsNullOrWhiteSpace(searchString.Text)
-                && !worker.IsBusy)
+                /*&& !worker.IsBusy*/)
             {
                 btnClick.IsEnabled = true;
                 cancelSearchButton.IsEnabled = true;
@@ -254,7 +318,7 @@ namespace FileManager.v10
             }
             catch
             { }
-            
+
         }
 
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
