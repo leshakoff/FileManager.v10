@@ -19,7 +19,7 @@ namespace FileManager.v10
             {
                 Process PrFolder = new Process();
                 ProcessStartInfo psi = new ProcessStartInfo();
-                
+
                 psi.CreateNoWindow = true;
                 psi.WindowStyle = ProcessWindowStyle.Normal;
                 psi.FileName = "explorer";
@@ -88,76 +88,87 @@ namespace FileManager.v10
                 }
             }
             catch
-            { 
-                
+            {
+
             }
 
             return allFilesAndDirectories;
         }
 
-
-        public static List<FileAbout> GetList(string path)
+        private static bool TryGetDirectoryData(string d, out FileAbout data)
         {
-            List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
+            try
+            {
+                DirectoryInfo di = new DirectoryInfo(d);
+                if (!object.Equals((di.Attributes & FileAttributes.System), FileAttributes.System) &&
+                    !object.Equals((di.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
+                {
+
+                    //ImageSource img = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close).Clone();
+
+                    FileAbout fi = new FileAbout
+                    {
+                        Name = di.Name,
+                        CreationTime = di.CreationTime,
+                        Extension = "Папка",
+                        Size = GetSize(DirSize(di)),
+                        LastWrite = di.LastWriteTime,
+                        FullPath = di.FullName,
+                        Image = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close)
+                    };
+                    //allFilesAndDirectories.Add(fi);
+                    data = fi;
+                    fi.Image.Freeze();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR to get directory info for {d}. Exception: {ex}");
+            }
+
+            data = null;
+            return false;
+        }
+
+        public static IEnumerable<FileAbout> GetList(string path)
+        {
+            //List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
             if (!File.Exists(path))
             {
-                try
+                IEnumerable<string> dirs = Directory.EnumerateDirectories(path);
+                IEnumerable<string> files = Directory.EnumerateFiles(path);
+
+                foreach (var d in dirs)
                 {
-                    List<string> dirs = Directory.EnumerateDirectories(path).ToList();
-                    List<string> files = Directory.EnumerateFiles(path).ToList();
 
-                    foreach (var d in dirs)
-                    {
-
-                        DirectoryInfo di = new DirectoryInfo(d);
-                        if (!object.Equals((di.Attributes & FileAttributes.System), FileAttributes.System) &&
-                            !object.Equals((di.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
-                        {
-
-                            //ImageSource img = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close).Clone();
-
-                            FileAbout fi = new FileAbout
-                            {
-                                Name = di.Name,
-                                CreationTime = di.CreationTime,
-                                Extension = "Папка",
-                                Size = GetSize(DirSize(di)),
-                                LastWrite = di.LastWriteTime,
-                                FullPath = di.FullName,
-                                Image = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close)
-                            };
-                            allFilesAndDirectories.Add(fi);
-                        }
-
-
-                    }
-
-                    foreach (var f in files)
-                    {
-                        FileInfo fi = new FileInfo(f);
-                        if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
-                            !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
-                        {
-                            /*FileManager.v10.Models.FileManager.GetImageSource(fi.FullName).Freeze()*/
-                            ;
-                            FileAbout fiAbout = new FileAbout
-                            {
-                                Name = fi.Name,
-                                CreationTime = fi.CreationTime,
-                                Extension = fi.Extension,
-                                LastWrite = fi.LastWriteTime,
-                                Size = GetSize(fi.Length),
-                                FullPath = fi.FullName,
-                                Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
-                            };
-                            allFilesAndDirectories.Add(fiAbout);
-                        }
-
-                    }
+                    if (TryGetDirectoryData(d, out var data))
+                        yield return data;
                 }
-                catch
+
+                foreach (var f in files)
                 {
+                    FileInfo fi = new FileInfo(f);
+                    if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
+                        !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
+                    {
+                        /*FileManager.v10.Models.FileManager.GetImageSource(fi.FullName).Freeze()*/
+                        ;
+                        FileAbout fiAbout = new FileAbout
+                        {
+                            Name = fi.Name,
+                            CreationTime = fi.CreationTime,
+                            Extension = fi.Extension,
+                            LastWrite = fi.LastWriteTime,
+                            Size = GetSize(fi.Length),
+                            FullPath = fi.FullName,
+                            Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
+                        };
+                        fiAbout.Image.Freeze();
+                        //allFilesAndDirectories.Add(fiAbout);
+                        yield return fiAbout;
+                    }
 
                 }
 
@@ -180,12 +191,14 @@ namespace FileManager.v10
                         Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
                     };
 
-                    allFilesAndDirectories.Add(ab);
+                    //allFilesAndDirectories.Add(ab);
+                    ab.Image.Freeze();
+                    yield return ab;
                 }
 
             }
 
-            return allFilesAndDirectories;
+            //return allFilesAndDirectories;
         }
 
 
@@ -195,12 +208,11 @@ namespace FileManager.v10
             long size = 0;
             try
             {
-                size = dir.GetFiles().Sum(fi => fi.Length) +
-                   dir.GetDirectories().Sum(di => DirSize(di));
+                size = 0;
             }
             catch
             {
-                
+
             }
             return size;
         }

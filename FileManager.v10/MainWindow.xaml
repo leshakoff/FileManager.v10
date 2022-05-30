@@ -185,6 +185,7 @@
             <!-- Датагрид, в котором отображаются файлы/папки, содержащиеся в элементе дерева
                  или найденные по поиску -->
             <DataGrid Visibility="Collapsed"
+                      ItemsSource="{Binding Locations}"
                       CanUserAddRows="False" 
                       x:Name="dataGrid" 
                       AutoGenerateColumns="False"
@@ -197,6 +198,7 @@
                       Background="{StaticResource backgroundBrush}"
                       Foreground="#cdcdcd"
                       CellStyle="{StaticResource CellStyleWithPadding}"
+                      
                       MouseDoubleClick="DataGrid_MouseDoubleClick"
                       MouseLeftButtonUp="CheckElementExtension"
                       RowHeaderWidth="0"
