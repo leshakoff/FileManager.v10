@@ -77,7 +77,6 @@ namespace FileManager.v10
 
             UpdateTreeView();
 
-
             var model = new IndexViewModel();
             DataContext = model;
 
@@ -188,10 +187,10 @@ namespace FileManager.v10
                     Boop.Text = String.Empty;
                     spinnerGif.Visibility = Visibility.Collapsed;
 
-                    CheckDataGridItems();
-
                     if (dataGrid.Items.Count == 0)
                         Boop.Text = "Ничего не найдено.";
+
+                    CheckDataGridItems();
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             }
@@ -671,33 +670,38 @@ namespace FileManager.v10
 
                 if (ext == ".txt")
                 {
-                    readFileBtn.IsEnabled = true;
-                    editFileBtn.IsEnabled = true;
+                    //readFileBtn.IsEnabled = true;
+                    //editFileBtn.IsEnabled = true;
 
-                    playMediaFileBtn.IsEnabled = false;
-                    pauseMediaFileBtn.IsEnabled = false;
-                    stopMediaFileBtn.IsEnabled = false;
+                    //playMediaFileBtn.IsEnabled = false;
+                    //pauseMediaFileBtn.IsEnabled = false;
+                    //stopMediaFileBtn.IsEnabled = false;
                 }
                 else if (ext == ".mp4")
                 {
-                    playMediaFileBtn.IsEnabled = true;
-                    pauseMediaFileBtn.IsEnabled = true;
-                    stopMediaFileBtn.IsEnabled = true;
+                    //playMediaFileBtn.IsEnabled = true;
+                    //pauseMediaFileBtn.IsEnabled = true;
+                    //stopMediaFileBtn.IsEnabled = true;
 
-                    readFileBtn.IsEnabled = false;
-                    editFileBtn.IsEnabled = false;
+                    //readFileBtn.IsEnabled = false;
+                    //editFileBtn.IsEnabled = false;
                 }
                 else
                 {
-                    readFileBtn.IsEnabled = false;
-                    editFileBtn.IsEnabled = false;
-                    playMediaFileBtn.IsEnabled = false;
-                    pauseMediaFileBtn.IsEnabled = false;
-                    stopMediaFileBtn.IsEnabled = false;
+                    //readFileBtn.IsEnabled = false;
+                    //editFileBtn.IsEnabled = false;
+                    //playMediaFileBtn.IsEnabled = false;
+                    //pauseMediaFileBtn.IsEnabled = false;
+                    //stopMediaFileBtn.IsEnabled = false;
                 }
             }
         }
 
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            DataContext = new WindowBlureffect(this, AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND);
+        }
     }
 
 }

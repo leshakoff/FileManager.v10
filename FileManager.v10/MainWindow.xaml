@@ -7,18 +7,33 @@
         xmlns:local="clr-namespace:FileManager.v10"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         TextElement.FontWeight="Regular"
+         TextElement.FontSize="13"
+         TextOptions.TextFormattingMode="Ideal"
+         TextOptions.TextRenderingMode="Auto"
+
+         FontFamily="{DynamicResource MaterialDesignFont}"
         
-        Title="MainWindow" 
+                       
+    Title="MainWindow" 
         Height="500" 
-        Width="1000" 
-        Background="Transparent" 
-        AllowsTransparency="True"
-        WindowStyle="None">
+        Width="1000"
+        WindowStyle="None"
+        Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen"
+        Background="#01000000"
+        AllowsTransparency="True">
+
+    <!--          -->
+        <!--          Background="{DynamicResource MaterialDesignPaper}" -->
 
     <!-- Основной контейнер -->
-        <Grid x:Name="mainWindow" MouseLeftButtonDown="DragNDropWindow">
+    <Grid x:Name="mainWindow" MouseLeftButtonDown="DragNDropWindow">
+        
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.07*"></RowDefinition>
+            <RowDefinition Height="0.10*"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -30,151 +45,297 @@
 
         <!-- Прямоугольник с закруглёнными углами, который выполняет функцию главного окна -->
         <Rectangle x:Name="mainBackground" 
-                   Grid.Row="0" 
+                   Grid.Row="1" 
                    Grid.Column="0" 
-                   Grid.ColumnSpan="2" 
-                   Grid.RowSpan="2" 
-                   RadiusX="20" 
-                   RadiusY="20" 
-                   Fill="{StaticResource backgroundBrush}" 
+                   Fill="#FF1F1F1F" 
                    Height="Auto" Width="Auto" />
 
-            <!-- Хэдер -->
-            <Grid x:Name="header" 
+        <!-- Хэдер -->
+        <Grid x:Name="header" 
                       Grid.Row="0" 
                       Grid.Column="0" 
                       Grid.ColumnSpan="2"
-                      Background="{StaticResource backgroundForDGHeader}"
-                      VerticalAlignment="Top">
+                      Height="Auto"
+                      Background="#FF1F1F1F"
+                      Margin="0">
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" ></RowDefinition>
+            </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="0.034*"></ColumnDefinition>
-                        <ColumnDefinition Width="0.034*"></ColumnDefinition>
-                        <ColumnDefinition Width="0.034*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-            
-            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="0.034*"></ColumnDefinition>
+                <ColumnDefinition Width="0.034*"></ColumnDefinition>
+                <ColumnDefinition Width="0.034*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-                    <TextBlock VerticalAlignment="Center" Margin="16,4,0,0" Grid.Column="0" FontSize="16" FontFamily="Segoe UI" FontWeight="Bold">FileManager</TextBlock>
-                    <Button Grid.Column="1" BorderBrush="{x:Null}" Style="{StaticResource collapseButton}" Click="CollapseWindow"/>
-                    <Button Grid.Column="2" BorderBrush="{x:Null}" Style="{StaticResource restoreDownButton}" Click="RestoreWindow" />
-                    <Button Grid.Column="3" BorderBrush="{x:Null}" Style="{StaticResource closeWindowButton}" Click="CloseWindow" />
-                </Grid>
+
+
+            <TextBlock VerticalAlignment="Center"
+                       Foreground="#FF707070"
+                       Margin="16,4,0,0" 
+                       Grid.Column="0" 
+                       FontSize="40" 
+                       FontWeight="Bold" FontFamily="/Fonts/#Libre Barcode 39 Text">FileManager</TextBlock>
+
+            <!-- Кнопки сворачивания, разворачивания и закрытия окна -->
+                <Button Grid.Column="1" BorderBrush="{x:Null}" Click="CollapseWindow"
+                        Background="Transparent"
+                        Padding="0" Cursor="Hand"
+                        materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                        materialDesign:ShadowAssist.Darken="False"
+                        >
+                <materialDesign:PackIcon Kind="WindowMinimize" 
+                                         Foreground="White" 
+                                         VerticalAlignment="Center" 
+                                         HorizontalAlignment="Center"
+                                         />
+            </Button>
+            <Button Grid.Column="2" BorderBrush="{x:Null}"  Click="RestoreWindow" Padding="0"
+                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                        materialDesign:ShadowAssist.Darken="False"
+                    Background="Transparent" >
+                <materialDesign:PackIcon Kind="WindowRestore" 
+                                         Foreground="White" 
+                                         VerticalAlignment="Center" 
+                                         HorizontalAlignment="Center"/>
+            </Button>
+            <Button Grid.Column="3" BorderBrush="{x:Null}" Padding="0" Click="CloseWindow"
+                    Background="Transparent"
+                    materialDesign:ShadowAssist.ShadowDepth="Depth0"
+                        materialDesign:ShadowAssist.Darken="False">
+                <materialDesign:PackIcon Kind="WindowClose" 
+                                         Foreground="White" 
+                                         VerticalAlignment="Center" 
+                                         HorizontalAlignment="Center"/>
+            </Button>
+        </Grid>
 
         <!-- Дерево файлов и папок -->
         <TreeView Name="treeView" 
-                      Grid.Row="1"
-                      Grid.Column="0"
-                  Margin="5" 
+                  Visibility="Visible"
+                  Grid.Row="1"
+                  Grid.Column="0"
+                  Margin="6" 
                   MouseDoubleClick="OpenInExplorer" 
                   MouseLeftButtonUp="GetFilesInCurrentFolder" 
                   MinWidth="300"
                   Background="Transparent"
                   BorderThickness="0"
+                  Opacity="0.8"
                   >
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                        <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
-                        <Setter Property="Foreground" Value="{StaticResource foregroundBrush}" />
-                        <Setter Property="FontSize" Value="14" />
-                    </Style>
-                </TreeView.ItemContainerStyle>
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
-                            <TextBlock Text="{Binding Path=FileSystemInfo.Name}"></TextBlock>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                </TreeView.Resources>
-            </TreeView>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="16" />
+                    <Setter Property="Padding" Value="2"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type classes:FileSystemObjectInfo}" ItemsSource="{Binding Path=Children}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding Path=ImageSource, UpdateSourceTrigger=PropertyChanged}" Margin="0,1,8,1"></Image>
+                        <TextBlock Text="{Binding Path=FileSystemInfo.Name}"></TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
 
         <!-- Основное рабочее пространство -->
         <StackPanel Grid.Row="1" Grid.Column="2" Margin="12">
 
             <!-- Подсказка (введите название файла/папки...) -->
-            <TextBlock
-                    Margin="6"
-                    Text="Введите название файла/папки или расширение в формате .txt"
-                    Width="400"
-                    Foreground="{StaticResource foregroundBrush}"/>
+            <!-- "Введите название файла/папки или расширение в формате .txt" -->
 
+                <Border BorderThickness="1" BorderBrush="White" CornerRadius="2" Width="460">
+                <TextBox 
+                    materialDesign:HintAssist.Hint="Введите название файла/папки или расширение в формате .txt"
+                    Padding="8"
+                    FontSize="14"
+                    BorderThickness="0"
+                    FontWeight="Bold"
+                        x:Name="searchString" 
+                         Foreground="White"
+                         Width="460" 
+                         TextChanged="SearchStringChanged"  >
+                </TextBox>
+            </Border>
             <!-- Панель с тексбоксом поиска, кнопками и локацией поиска -->
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-                <!-- Поле для ввода поиска -->
-                    <TextBox x:Name="searchString" 
-                     Width="250" 
-                     TextChanged="SearchStringChanged" />
-                
-                    <!-- Кнопка старта поиска -->
-                    <Border BorderBrush="{StaticResource borderForBrush}" BorderThickness="1">
-                        <Button Content="SEARCH!"
+                <!-- Кнопка старта поиска -->
+
+                <Button 
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        Background="Transparent"
+                        Foreground="White"
                                 Click="StartSearch" 
                                 x:Name="btnClick" 
                                 IsEnabled="False" Width="124"
-                                Style="{StaticResource buttonGreen}" />
-                    </Border>
+                        Margin="14,8,14,8"
+                        Padding="0"
+                                >
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Magnify" VerticalAlignment="Center" Margin="0,0,4,0" />
+                        <TextBlock Text="ПОИСК" />
+                    </StackPanel>
+                </Button>
 
-                    <!-- Кнопка остановки поиска -->
-                    <Border  BorderBrush="{StaticResource borderForBrush}" BorderThickness="1" >
-                    <Button Content="STOP SEARCH" 
+                <!-- Кнопка остановки поиска -->
+
+                <Button
+                        
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        Background="Transparent"
+                        Foreground="White"
+                        Margin="14,8,14,8"
                                 Click="CancelSearchClick"
-                                x:Name="cancelSearchButton" Width="124"
-                                Style="{StaticResource buttonRed}" IsEnabled="False" />
-                </Border>
+                                x:Name="cancelSearchButton" Width="200"
+                                IsEnabled="False" >
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="StopCircleOutline" VerticalAlignment="Center" Margin="0,0,4,0" />
+                        <TextBlock Text="ОСТАНОВИТЬ ПОИСК" />
+                    </StackPanel>
+                </Button>
 
 
 
                 <!-- Локация поиска -->
-                <ComboBox
-                          Width="94"
+
+
+                <Border BorderBrush="White" BorderThickness="1" CornerRadius="2" Height="32" Width="79" Margin="14,8,14,8">
+                    <ComboBox
+                    Opacity="0.4"
+                    BorderThickness="0"
+                          FontWeight="Bold"
+                          VerticalContentAlignment="Center"
+                          Height="32"
+                          
+                          Background="Transparent"
+                          HorizontalContentAlignment="Center"
+                          Foreground="White"
+                          Width="72"
                           x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
                           DropDownOpened="GetCurrentSearchLocation">
-                    <ComboBoxItem IsSelected="True">
-                        <TextBlock>C:\</TextBlock>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock>D:\</TextBlock>
-                    </ComboBoxItem>
-                    <ComboBoxItem Name="currentFolderCombobox" Visibility="Collapsed">
-                        <TextBlock x:Name="currentFolder"></TextBlock>
-                    </ComboBoxItem>
-                </ComboBox>
+                        <ComboBoxItem IsSelected="True">
+
+                            <TextBlock>C:\</TextBlock>
+
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock>D:\</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem Name="currentFolderCombobox" Visibility="Collapsed">
+                            <TextBlock x:Name="currentFolder"></TextBlock>
+                        </ComboBoxItem>
+                    </ComboBox>
+                </Border>
 
             </StackPanel>
 
             <!-- Панель с кнопками операций над файлами -->
-                <StackPanel Orientation="Horizontal">
-                <Button x:Name="createFileBtn" Click="CreateFile" IsEnabled="False">Создать</Button>
-                <Button x:Name="renameFileBtn" Click="RenameFile" IsEnabled="False">Переименовать</Button>
-                <Button x:Name="copyFileBtn" Click="CopyFile" IsEnabled="False">Копировать</Button>
-                <Button x:Name="deleteFileBtn" Click="DeleteFile" IsEnabled="False">Удалить</Button>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                
+                <Button x:Name="createFileBtn" Click="CreateFile" 
+                        IsEnabled="False" 
+                        Foreground="White" 
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        Margin="24,6,24,6"
+                        ToolTip="Создать новый файл/папку"
+                        ToolTipService.ShowOnDisabled="True">
+                    
+                    <materialDesign:PackIcon Kind="FilePlusOutline" 
+                                             VerticalAlignment="Center"  
+                                             HorizontalAlignment="Center"
+                                             Width="20"
+                                             Height="20"/>
+                </Button>
+                <Button x:Name="renameFileBtn" Click="RenameFile" IsEnabled="False"
+                        Foreground="White" 
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        Margin="24,6,24,6"
+                        ToolTip="Переименовать файл/папку"
+                        ToolTipService.ShowOnDisabled="True">
 
-                <Button x:Name="readFileBtn" Click="ReadFile" IsEnabled="False">Читать</Button>
-                <Button x:Name="editFileBtn" Click="EditFile" IsEnabled="False">Редактировать</Button>
+                    <materialDesign:PackIcon Kind="FileSign" 
+                                             VerticalAlignment="Center"  
+                                             HorizontalAlignment="Center"
+                                             Width="20"
+                                             Height="20"/>
+                </Button>
+                <Button x:Name="copyFileBtn" Click="CopyFile" IsEnabled="False"
+                        Foreground="White" 
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        Margin="24,6,24,6"
+                        ToolTip="Копировать файл/папку"
+                        ToolTipService.ShowOnDisabled="True">
+                    <materialDesign:PackIcon Kind="FileMultipleOutline" 
+                                             VerticalAlignment="Center"  
+                                             HorizontalAlignment="Center"
+                                             Width="20"
+                                             Height="20"/>
+                </Button>
+                <Button x:Name="deleteFileBtn" Click="DeleteFile" IsEnabled="False"
+                        Foreground="White" 
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        Margin="26,6,26,6"
+                        ToolTip="Удалить файл/папку"
+                        ToolTipService.ShowOnDisabled="True">
 
-                <Button x:Name="playMediaFileBtn" Click="PlayMediaFile" IsEnabled="False">Воспроизвести</Button>
-                <Button x:Name="pauseMediaFileBtn" Click="PauseMediaFile" IsEnabled="False">Пауза</Button>
-                <Button x:Name="stopMediaFileBtn" Click="StopMediaFile" IsEnabled="False">Стоп</Button>
+                    <materialDesign:PackIcon Kind="FileRemoveOutline" 
+                                             VerticalAlignment="Center"  
+                                             HorizontalAlignment="Center"
+                                             Width="20"
+                                             Height="20"/>
+
+                </Button>
+
+                <Button x:Name="readFileBtn" Click="ReadFile" IsEnabled="False"
+                        Foreground="White" 
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1"
+                        Margin="26,6,24,6"
+                        ToolTip="Открыть файл соответсвующей программой"
+                        ToolTipService.ShowOnDisabled="True"
+                        >
+                    <materialDesign:PackIcon Kind="FolderOpenOutline" 
+                                             VerticalAlignment="Center"  
+                                             HorizontalAlignment="Center"
+                                             Width="20"
+                                             Height="20"/>
+
+                </Button>
             </StackPanel>
 
             <!-- Текстблок с отображением, что ищется, за сколько отыскалось и тд -->
-            <TextBlock x:Name="Boop" Margin="6" />
+            <TextBlock x:Name="Boop" 
+                       Margin="10, 6, 10, 6" 
+                       Width="460" 
+                       HorizontalAlignment="Center" 
+                       Opacity="0.7"
+                       TextAlignment="Center"/>
 
             <!-- Прогрессбар -->
             <ProgressBar 
                 Visibility="Hidden"
                 Margin="6"
                 HorizontalAlignment="Stretch"
-                Height="20" Width="Auto"
+                Height="6" Width="460"
                 Name="pbStatus" />
 
             <!-- Спиннер, которому не было суждено появиться в программе, 
@@ -184,7 +345,7 @@
 
             <!-- Датагрид, в котором отображаются файлы/папки, содержащиеся в элементе дерева
                  или найденные по поиску -->
-            <DataGrid Visibility="Collapsed"
+            <DataGrid Visibility="Visible"
                       ItemsSource="{Binding Locations}"
                       CanUserAddRows="False" 
                       x:Name="dataGrid" 
@@ -195,10 +356,8 @@
                       Margin="0"
                       GridLinesVisibility="None"
                       HorizontalAlignment="Stretch"
-                      Background="{StaticResource backgroundBrush}"
                       Foreground="#cdcdcd"
                       CellStyle="{StaticResource CellStyleWithPadding}"
-                      
                       MouseDoubleClick="DataGrid_MouseDoubleClick"
                       MouseLeftButtonUp="CheckElementExtension"
                       RowHeaderWidth="0"
@@ -207,68 +366,69 @@
                       ScrollViewer.CanContentScroll="True"
                       >
 
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="{x:Type DataGridColumnHeader}" >
-                            <Setter Property="Background" Value="{StaticResource backgroundForDGHeader}"></Setter>
-                            <Setter Property="Foreground" Value="{StaticResource foregroundForDGHeader}"></Setter>
-                            <Setter Property="BorderBrush" Value="{StaticResource foregroundBrush}"></Setter>
-                            <Setter Property="Padding" Value="4" />
-                            <Setter Property="FontSize" Value="12" />
-                            <Setter Property="BorderThickness" Value="1"></Setter>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}" >
+                        <Setter Property="Background" Value="#404040"></Setter>
+                        <Setter Property="Foreground" Value="DarkGray"></Setter>
+                        <Setter Property="BorderBrush" Value="White"></Setter>
+                        <Setter Property="Padding" Value="4" />
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="BorderThickness" Value="1"></Setter>
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
 
-                    <DataGrid.RowStyle>
-                        <Style TargetType="{x:Type DataGridRow}">
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
                         <Setter Property="Background" Value="{StaticResource backgroundBrush}" />
                     </Style>
-                    </DataGrid.RowStyle>
+                </DataGrid.RowStyle>
 
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Image Source="{Binding Image}" Stretch="None" />
-                                </DataTemplate>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Image}" Stretch="None" />
+                            </DataTemplate>
 
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
 
 
-                        <DataGridTextColumn Header="Имя" 
+                    <DataGridTextColumn Header="Имя" 
                                         Binding="{Binding Name}"
                                         Foreground="{StaticResource foregroundBrush}"
                                         Width="*"
                                         
                                         />
 
-                        <DataGridTextColumn Header="Полный путь" 
+                    <DataGridTextColumn Header="Полный путь" 
                                         Binding="{Binding FullPath}"
                                         Foreground="{StaticResource foregroundBrush}"
                                         Width="*"
                                         
                                         />
 
-                        <DataGridTextColumn Header="Расширение" 
+                    <DataGridTextColumn Header="Расширение" 
                                         Binding="{Binding Extension}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"
                                         />
-                        <DataGridTextColumn Header="Размер" 
+                    <DataGridTextColumn Header="Размер" 
                                         Binding="{Binding Size}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"/>
-                        <DataGridTextColumn Header="Дата создания" 
+                    <DataGridTextColumn Header="Дата создания" 
                                         Binding="{Binding CreationTime, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"/>
-                        <DataGridTextColumn Header="Последнее изменение" 
+                    <DataGridTextColumn Header="Последнее изменение" 
                                         Binding="{Binding LastWrite, StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}}"
                                         Foreground="{StaticResource mutedColorForDG}"
                                         Width="Auto"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                </DataGrid.Columns>
+            </DataGrid>
 
         </StackPanel>
 
