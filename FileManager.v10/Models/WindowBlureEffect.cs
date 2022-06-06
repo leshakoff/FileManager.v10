@@ -5,9 +5,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace FileManager.v10
+namespace FileManager.v10.Models
 {
-    class WindowBlureffect
+    public class WindowBlureEffect
     {
         [DllImport("user32.dll")]
         internal static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
@@ -30,7 +30,7 @@ namespace FileManager.v10
 
             //To  enable blur the image behind the window
             accent.AccentState = accentState;
-            accent.GradientColor = (_blurOpacity << 24) | (_blurBackgroundColor & 0xFFFFFF); /*(White mask 0xFFFFFF)*/
+            accent.GradientColor = (int)((_blurOpacity << 24) | (_blurBackgroundColor & 0xFFFFFF)); /*(White mask 0xFFFFFF)*/
 
 
             var accentStructSize = Marshal.SizeOf(accent);
@@ -49,11 +49,44 @@ namespace FileManager.v10
         }
 
         //to call blur in our desired window
-        internal WindowBlureffect(Window window, AccentState accentState)
+        internal WindowBlureEffect(Window window, AccentState accentState)
         {
             this.window = window;
             this.accentState = accentState;
             EnableBlur();
         }
+    }
+
+
+    internal enum AccentState
+    {
+        ACCENT_DISABLED,
+        ACCENT_ENABLE_GRADIENT,
+        ACCENT_ENABLE_TRANSPARENTGRADIENT,
+        ACCENT_ENABLE_BLURBEHIND,
+        ACCENT_ENABLE_ACRYLICBLURBEHIND,
+        ACCENT_INVALID_STATE,
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct AccentPolicy
+    {
+        public AccentState AccentState;
+        public int AccentFlags;
+        public int GradientColor;
+        public int AnimationId;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct WindowCompositionAttributeData
+    {
+        public WindowCompositionAttribute Attribute;
+        public IntPtr Data;
+        public int SizeOfData;
+    }
+
+    internal enum WindowCompositionAttribute
+    {
+        WCA_ACCENT_POLICY = 19,
     }
 }

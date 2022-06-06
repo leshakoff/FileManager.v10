@@ -69,13 +69,16 @@ namespace FileManager.v10
         public List<FileAbout> aboutAll = new List<FileAbout>();    // временный список, в котором мы будем хранить
                                                                     // найденные файлы/папки из BackgroundWorkera. 
 
-        //public BackgroundWorker worker = new BackgroundWorker();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            UpdateTreeView();
+            var drives = DriveInfo.GetDrives();
+            foreach (var drive in drives)
+            {
+                if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
+            }
 
             var model = new IndexViewModel();
             DataContext = model;
@@ -94,7 +97,9 @@ namespace FileManager.v10
         private void UpdateTreeView(string pathForExpand = null)
         {
             this.treeView.Items.Clear();
-            this.dataGrid.ItemsSource = null;
+
+
+
             CheckDataGridItems();
 
             var drives = DriveInfo.GetDrives();
@@ -105,6 +110,7 @@ namespace FileManager.v10
 
             if (!String.IsNullOrEmpty(pathForExpand))
             {
+
 
                 string addSlashes = @"\";
 
@@ -152,6 +158,7 @@ namespace FileManager.v10
 
                 }
 
+
             }
         }
 
@@ -194,7 +201,6 @@ namespace FileManager.v10
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             }
-
 
         }
 
@@ -621,28 +627,6 @@ namespace FileManager.v10
 
         }
 
-        private void EditFile(object sender, RoutedEventArgs e)
-        {
-            //TextEditor tx = new TextEditor();
-            //tx.Owner = this;
-            //tx.ShowDialog();
-        }
-
-        private void PlayMediaFile(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PauseMediaFile(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void StopMediaFile(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void ChangeButtonsEnabled()
         {
             createFileBtn.IsEnabled = true;
@@ -697,10 +681,9 @@ namespace FileManager.v10
             }
         }
 
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DataContext = new WindowBlureffect(this, AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND);
+            WindowBlureEffect wp = new WindowBlureEffect(this, AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND);
         }
     }
 

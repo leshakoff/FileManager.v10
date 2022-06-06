@@ -7,8 +7,8 @@
         xmlns:local="clr-namespace:FileManager.v10"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" d:DataContext="{d:DesignInstance Type=classes:IndexViewModel}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
          TextElement.FontWeight="Regular"
          TextElement.FontSize="13"
          TextOptions.TextFormattingMode="Ideal"
@@ -18,16 +18,18 @@
         
                        
     Title="MainWindow" 
-        Height="500" 
+        Height="600" 
         Width="1000"
         WindowStyle="None"
-        Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen"
         Background="#01000000"
-        AllowsTransparency="True">
+        AllowsTransparency="True"
+        Loaded="Window_Loaded">
 
     <!--          -->
-        <!--          Background="{DynamicResource MaterialDesignPaper}" -->
+        <!--          Background="{DynamicResource MaterialDesignPaper}"
+    
+    -->
 
     <!-- Основной контейнер -->
     <Grid x:Name="mainWindow" MouseLeftButtonDown="DragNDropWindow">
@@ -345,32 +347,38 @@
 
             <!-- Датагрид, в котором отображаются файлы/папки, содержащиеся в элементе дерева
                  или найденные по поиску -->
+
+            <!--CellStyle="{StaticResource CellStyleWithPadding}"-->
+
             <DataGrid Visibility="Visible"
                       ItemsSource="{Binding Locations}"
                       CanUserAddRows="False" 
                       x:Name="dataGrid" 
                       AutoGenerateColumns="False"
                       IsReadOnly="True" 
-                      Width="Auto" 
-                      MaxHeight="300" 
+                      Width="600" 
+                      MaxHeight="350"
                       Margin="0"
                       GridLinesVisibility="None"
                       HorizontalAlignment="Stretch"
                       Foreground="#cdcdcd"
-                      CellStyle="{StaticResource CellStyleWithPadding}"
                       MouseDoubleClick="DataGrid_MouseDoubleClick"
                       MouseLeftButtonUp="CheckElementExtension"
                       RowHeaderWidth="0"
                       EnableRowVirtualization="True" 
                       EnableColumnVirtualization="True" 
                       ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                      materialDesign:ScrollViewerAssist.IgnorePadding="True"
+                      materialDesign:DataGridAssist.CornerRadius="6"
+                      materialDesign:DataGridAssist.CellPadding="6"
                       >
 
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="{x:Type DataGridColumnHeader}" >
-                        <Setter Property="Background" Value="#404040"></Setter>
+                        <Setter Property="Background" Value="Transparent"></Setter>
                         <Setter Property="Foreground" Value="DarkGray"></Setter>
-                        <Setter Property="BorderBrush" Value="White"></Setter>
+                        <Setter Property="BorderBrush" Value="#c3c3c3"></Setter>
                         <Setter Property="Padding" Value="4" />
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="BorderThickness" Value="1"></Setter>
@@ -380,7 +388,7 @@
 
                 <DataGrid.RowStyle>
                     <Style TargetType="{x:Type DataGridRow}">
-                        <Setter Property="Background" Value="{StaticResource backgroundBrush}" />
+                        <Setter Property="Background" Value="Transparent" />
                     </Style>
                 </DataGrid.RowStyle>
 
@@ -398,14 +406,14 @@
 
                     <DataGridTextColumn Header="Имя" 
                                         Binding="{Binding Name}"
-                                        Foreground="{StaticResource foregroundBrush}"
+                                        Foreground="White"
                                         Width="*"
                                         
                                         />
 
                     <DataGridTextColumn Header="Полный путь" 
                                         Binding="{Binding FullPath}"
-                                        Foreground="{StaticResource foregroundBrush}"
+                                        Foreground="White"
                                         Width="*"
                                         
                                         />

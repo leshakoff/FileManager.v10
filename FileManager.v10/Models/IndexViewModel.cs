@@ -26,7 +26,7 @@ namespace FileManager.v10.Models
                 {
                     _locations = value;
                     NotifyPropertyChanged();
-                    CalculateFolderSizes();
+                    //CalculateFolderSizes();
                 }
             }
         }
