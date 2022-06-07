@@ -9,15 +9,13 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" d:DataContext="{d:DesignInstance Type=classes:IndexViewModel}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-         TextElement.FontWeight="Regular"
-         TextElement.FontSize="13"
-         TextOptions.TextFormattingMode="Ideal"
-         TextOptions.TextRenderingMode="Auto"
-
-         FontFamily="{DynamicResource MaterialDesignFont}"
-        
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="{DynamicResource MaterialDesignFont}"
                        
-    Title="MainWindow" 
+        Title="MainWindow" 
         Height="600" 
         Width="1000"
         WindowStyle="None"
@@ -26,14 +24,11 @@
         AllowsTransparency="True"
         Loaded="Window_Loaded">
 
-    <!--          -->
-        <!--          Background="{DynamicResource MaterialDesignPaper}"
-    
-    -->
+
 
     <!-- Основной контейнер -->
     <Grid x:Name="mainWindow" MouseLeftButtonDown="DragNDropWindow">
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="0.10*"></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -51,6 +46,7 @@
                    Grid.Column="0" 
                    Fill="#FF1F1F1F" 
                    Height="Auto" Width="Auto" />
+
 
         <!-- Хэдер -->
         <Grid x:Name="header" 
@@ -73,40 +69,49 @@
             </Grid.ColumnDefinitions>
 
 
-
+            <!-- Название программы -->
             <TextBlock VerticalAlignment="Center"
-                       Foreground="#FF707070"
-                       Margin="16,4,0,0" 
-                       Grid.Column="0" 
-                       FontSize="40" 
-                       FontWeight="Bold" FontFamily="/Fonts/#Libre Barcode 39 Text">FileManager</TextBlock>
+                           Foreground="#FF707070"
+                           Margin="16,4,0,0" 
+                           Grid.Column="0" 
+                           FontSize="40" 
+                           FontWeight="Bold" 
+                           FontFamily="/Fonts/#Libre Barcode 39 Text">FileManager</TextBlock>
 
             <!-- Кнопки сворачивания, разворачивания и закрытия окна -->
-                <Button Grid.Column="1" BorderBrush="{x:Null}" Click="CollapseWindow"
+
+
+            <Button Grid.Column="1" BorderBrush="{x:Null}" Click="CollapseWindow"
                         Background="Transparent"
                         Padding="0" Cursor="Hand"
                         materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                        materialDesign:ShadowAssist.Darken="False"
-                        >
+                        materialDesign:ShadowAssist.Darken="False">
+
                 <materialDesign:PackIcon Kind="WindowMinimize" 
                                          Foreground="White" 
                                          VerticalAlignment="Center" 
                                          HorizontalAlignment="Center"
                                          />
             </Button>
+
+
             <Button Grid.Column="2" BorderBrush="{x:Null}"  Click="RestoreWindow" Padding="0"
                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                        materialDesign:ShadowAssist.Darken="False"
-                    Background="Transparent" >
+                    materialDesign:ShadowAssist.Darken="False"
+                    Background="Transparent">
+
                 <materialDesign:PackIcon Kind="WindowRestore" 
                                          Foreground="White" 
                                          VerticalAlignment="Center" 
                                          HorizontalAlignment="Center"/>
             </Button>
+
+
             <Button Grid.Column="3" BorderBrush="{x:Null}" Padding="0" Click="CloseWindow"
                     Background="Transparent"
                     materialDesign:ShadowAssist.ShadowDepth="Depth0"
-                        materialDesign:ShadowAssist.Darken="False">
+                    materialDesign:ShadowAssist.Darken="False">
+
                 <materialDesign:PackIcon Kind="WindowClose" 
                                          Foreground="White" 
                                          VerticalAlignment="Center" 
@@ -149,23 +154,23 @@
         <!-- Основное рабочее пространство -->
         <StackPanel Grid.Row="1" Grid.Column="2" Margin="12">
 
-            <!-- Подсказка (введите название файла/папки...) -->
-            <!-- "Введите название файла/папки или расширение в формате .txt" -->
-
-                <Border BorderThickness="1" BorderBrush="White" CornerRadius="2" Width="460">
+            <!-- Строка поиска (текстбокс) -->
+            <Border BorderThickness="1" BorderBrush="White" CornerRadius="2" Width="460">
                 <TextBox 
                     materialDesign:HintAssist.Hint="Введите название файла/папки или расширение в формате .txt"
                     Padding="8"
                     FontSize="14"
                     BorderThickness="0"
                     FontWeight="Bold"
-                        x:Name="searchString" 
-                         Foreground="White"
-                         Width="460" 
-                         TextChanged="SearchStringChanged"  >
+                    x:Name="searchString" 
+                    Foreground="White"
+                    Width="460" 
+                    TextChanged="SearchStringChanged"  >
                 </TextBox>
             </Border>
-            <!-- Панель с тексбоксом поиска, кнопками и локацией поиска -->
+
+
+            <!-- Панель с кнопками и локацией поиска -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
                 <!-- Кнопка старта поиска -->
@@ -175,15 +180,18 @@
                         BorderThickness="1"
                         Background="Transparent"
                         Foreground="White"
-                                Click="StartSearch" 
-                                x:Name="btnClick" 
-                                IsEnabled="False" Width="124"
+                        Click="Search" 
+                        x:Name="btnClick" 
+                        IsEnabled="False" 
+                        Width="124"
                         Margin="14,8,14,8"
-                        Padding="0"
-                                >
+                        Padding="0">
+
                     <StackPanel Orientation="Horizontal">
+
                         <materialDesign:PackIcon Kind="Magnify" VerticalAlignment="Center" Margin="0,0,4,0" />
                         <TextBlock Text="ПОИСК" />
+
                     </StackPanel>
                 </Button>
 
@@ -196,28 +204,30 @@
                         Background="Transparent"
                         Foreground="White"
                         Margin="14,8,14,8"
-                                Click="CancelSearchClick"
-                                x:Name="cancelSearchButton" Width="200"
-                                IsEnabled="False" >
+                        Click="CancelSearchClick"
+                        x:Name="cancelSearchButton" 
+                        Width="200"
+                        IsEnabled="False" >
+
                     <StackPanel Orientation="Horizontal">
+
                         <materialDesign:PackIcon Kind="StopCircleOutline" VerticalAlignment="Center" Margin="0,0,4,0" />
                         <TextBlock Text="ОСТАНОВИТЬ ПОИСК" />
+
                     </StackPanel>
                 </Button>
 
 
 
-                <!-- Локация поиска -->
-
+                <!-- Локация поиска (combobox) -->
 
                 <Border BorderBrush="White" BorderThickness="1" CornerRadius="2" Height="32" Width="79" Margin="14,8,14,8">
                     <ComboBox
-                    Opacity="0.4"
-                    BorderThickness="0"
+                          Opacity="0.4"
+                          BorderThickness="0"
                           FontWeight="Bold"
                           VerticalContentAlignment="Center"
-                          Height="32"
-                          
+                          Height="32" 
                           Background="Transparent"
                           HorizontalContentAlignment="Center"
                           Foreground="White"
@@ -225,17 +235,20 @@
                           x:Name="searchLocation" 
                           ToolTip="Укажите место, в котором будет выполняться поиск"
                           DropDownOpened="GetCurrentSearchLocation">
+
+
                         <ComboBoxItem IsSelected="True">
-
                             <TextBlock>C:\</TextBlock>
-
                         </ComboBoxItem>
+
                         <ComboBoxItem>
                             <TextBlock>D:\</TextBlock>
                         </ComboBoxItem>
+
                         <ComboBoxItem Name="currentFolderCombobox" Visibility="Collapsed">
                             <TextBlock x:Name="currentFolder"></TextBlock>
                         </ComboBoxItem>
+
                     </ComboBox>
                 </Border>
 
@@ -243,7 +256,7 @@
 
             <!-- Панель с кнопками операций над файлами -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
-                
+
                 <Button x:Name="createFileBtn" Click="CreateFile" 
                         IsEnabled="False" 
                         Foreground="White" 
@@ -253,7 +266,7 @@
                         Margin="24,6,24,6"
                         ToolTip="Создать новый файл/папку"
                         ToolTipService.ShowOnDisabled="True">
-                    
+
                     <materialDesign:PackIcon Kind="FilePlusOutline" 
                                              VerticalAlignment="Center"  
                                              HorizontalAlignment="Center"
@@ -340,15 +353,15 @@
                 Height="6" Width="460"
                 Name="pbStatus" />
 
-            <!-- Спиннер, которому не было суждено появиться в программе, 
-                 потому что я так и не вывела отображение файлов и папок в датагрид 
-                 в отдельный поток... -->
+            <!-- Спиннер, который отображается при 
+                 долгой загрузке файлов из текущей 
+                 ветки дерева в тривью -->
             <fa:ImageAwesome x:Name="spinnerGif" Icon="Spinner" Spin="True" Height="48" Width="48" SpinDuration="3" Visibility="Collapsed" />
 
-            <!-- Датагрид, в котором отображаются файлы/папки, содержащиеся в элементе дерева
+            <!-- Датагрид, в котором отображаются файлы/папки, 
+                 содержащиеся в элементе дерева
                  или найденные по поиску -->
 
-            <!--CellStyle="{StaticResource CellStyleWithPadding}"-->
 
             <DataGrid Visibility="Visible"
                       ItemsSource="{Binding Locations}"
@@ -371,8 +384,7 @@
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       materialDesign:ScrollViewerAssist.IgnorePadding="True"
                       materialDesign:DataGridAssist.CornerRadius="6"
-                      materialDesign:DataGridAssist.CellPadding="6"
-                      >
+                      materialDesign:DataGridAssist.CellPadding="6">
 
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="{x:Type DataGridColumnHeader}" >
@@ -408,14 +420,12 @@
                                         Binding="{Binding Name}"
                                         Foreground="White"
                                         Width="*"
-                                        
                                         />
 
                     <DataGridTextColumn Header="Полный путь" 
                                         Binding="{Binding FullPath}"
                                         Foreground="White"
                                         Width="*"
-                                        
                                         />
 
                     <DataGridTextColumn Header="Расширение" 

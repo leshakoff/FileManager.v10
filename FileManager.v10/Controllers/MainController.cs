@@ -12,7 +12,13 @@ namespace FileManager.v10
 {
     public class MainController
     {
-
+        /// <summary>
+        /// Метод, открывающий файл/папку в проводнике.
+        /// Если передаём папку - папка открывается, 
+        /// если файл - то файл просто выделяется в
+        /// папке, в которой он расположен. 
+        /// </summary>
+        /// <param name="file">Путь до файла/папки</param>
         public static void OpenInWinExplorer(string file)
         {
             try
@@ -33,17 +39,26 @@ namespace FileManager.v10
                     psi.Arguments = @"/n, /select, " + file;
                 }
 
-                //psi.Arguments = @"/n, /select, " + file;
                 PrFolder.StartInfo = psi;
                 PrFolder.Start();
             }
             catch
             {
-                MessageBox.Show("Доступ к папке защищён правами администратора!");
+                MessageBox.Show("Доступ к папке защищён правами администратора!", 
+                    "Ошибка", 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error);
             }
         }
 
-        public static List<FileAbout> GetList(List<DirectoryInfo> dirs, List<FileInfo> files)
+
+        /// <summary>
+        /// Перегруженная версия метода GetList, которая используется для поиска файлов/папок
+        /// </summary>
+        /// <param name="dirs">Список папок</param>
+        /// <param name="files">Список файлов</param>
+        /// <returns>Возвращает список файлов и папок, преобразованных в FileAbout</returns>
+        public static IEnumerable<FileAbout> GetList(List<DirectoryInfo> dirs, List<FileInfo> files)
         {
             List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
 
@@ -53,8 +68,7 @@ namespace FileManager.v10
                 {
                     // img.Freeze мы используем для того, чтобы не возникало исключений. 
                     // исключения ругаются на то, что мы получаем картинку в одном потоке, 
-                    // и пытаемся её использовать в другом; в нашем случае, backgroundworker
-                    // пытается получить картинку из основного потока, и вылетает исключение. 
+                    // и пытаемся её использовать в другом.
                     ImageSource img = FolderManager.GetImageSource(d.FullName, ShellManager.ItemState.Close);
                     img.Freeze();
 
@@ -95,6 +109,8 @@ namespace FileManager.v10
             return allFilesAndDirectories;
         }
 
+
+
         private static bool TryGetDirectoryData(string d, out FileAbout data)
         {
             try
@@ -103,8 +119,6 @@ namespace FileManager.v10
                 if (!object.Equals((di.Attributes & FileAttributes.System), FileAttributes.System) &&
                     !object.Equals((di.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
                 {
-
-                    //ImageSource img = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close).Clone();
 
                     FileAbout fi = new FileAbout
                     {
@@ -131,10 +145,9 @@ namespace FileManager.v10
             return false;
         }
 
+
         public static IEnumerable<FileAbout> GetList(string path)
         {
-            //List<FileAbout> allFilesAndDirectories = new List<FileAbout>();
-
             if (!File.Exists(path))
             {
                 IEnumerable<string> dirs = Directory.EnumerateDirectories(path);
@@ -153,8 +166,7 @@ namespace FileManager.v10
                     if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
                         !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
                     {
-                        /*FileManager.v10.Models.FileManager.GetImageSource(fi.FullName).Freeze()*/
-                        ;
+
                         FileAbout fiAbout = new FileAbout
                         {
                             Name = fi.Name,
@@ -166,7 +178,6 @@ namespace FileManager.v10
                             Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
                         };
                         fiAbout.Image.Freeze();
-                        //allFilesAndDirectories.Add(fiAbout);
                         yield return fiAbout;
                     }
 
@@ -191,14 +202,12 @@ namespace FileManager.v10
                         Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
                     };
 
-                    //allFilesAndDirectories.Add(ab);
                     ab.Image.Freeze();
                     yield return ab;
                 }
 
             }
 
-            //return allFilesAndDirectories;
         }
 
 
@@ -217,6 +226,12 @@ namespace FileManager.v10
             return size;
         }
 
+
+        /// <summary>
+        /// Метод, преобразовывающий размер в размер, описанный в кило-, мега-, гигабайтах и тд.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public static string GetSize(long size)
         {
             var unit = 1024;
@@ -226,6 +241,12 @@ namespace FileManager.v10
             return $"{size / Math.Pow(unit, exp):F2} {("KMGTPE")[exp - 1]}B";
         }
 
+
+        /// <summary>
+        /// Метод, копирующий директорию со всем её содержимым.
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="targetPath"></param>
         public static void CopyDirectory(string sourcePath, string targetPath)
         {
             Directory.CreateDirectory(targetPath);

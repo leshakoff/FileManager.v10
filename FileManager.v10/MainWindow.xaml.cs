@@ -25,26 +25,16 @@ namespace FileManager.v10
 {
     public partial class MainWindow : Window
     {
-        private Thread backgroundWorkerThread;         // Thread используется в небольшом костыле, 
-                                                       // предзназначенном для отмены поиска, который
-                                                       // мы выполняем в методе DoWork бэкграундворкера.
-                                                       // Так как у самого BakcgroundWorker-а 
-                                                       // отмена задачи работает не очень удобно, 
-                                                       // мы используем эдакий костыль в виде 
-                                                       // присвоения работы бэкграундворкера обычному 
-                                                       // экземпляру класса Thread, у которого мы можем
-                                                       // вызвать метод Interrupt, позволяющий нам прервать 
-                                                       // работу потока. 
+
+        public static CancellationTokenSource cts = new CancellationTokenSource();
+
+        public CancellationTokenSource ctsforData = new CancellationTokenSource();
+        public CancellationToken token = cts.Token;
 
         public TimeSpan stopwatch;                      // глобальная переменная, в которую мы можем записать
                                                         // время, за которое осуществился поиск. 
 
-        public long quantity;                           // глобальная переменная для записи количества
-                                                        // найденных файлов. Почему глобально? Потому что из
-                                                        // BackgroundWorker-а, в котором сам поиск осуществляется, 
-                                                        // невозможно работать с UI-элементами напрямую. 
-                                                        // Поэтому мы временно сохраняем эти значения, 
-                                                        // и затем используем их в UI в основном потоке. 
+        public long quantity;
 
         bool mainWindowState = false;                   // "переключатель" для корректной работы кнопки 
                                                         // "развернуть" окно. По умолчанию - false; 
@@ -204,73 +194,69 @@ namespace FileManager.v10
 
         }
 
-        private void StartSearch(object sender, RoutedEventArgs e)
+
+        private void Search(object sender, RoutedEventArgs e)
         {
-            IsMainList = false;
-            btnClick.IsEnabled = false;
-            cancelSearchButton.IsEnabled = true;
-            pbStatus.Visibility = Visibility.Visible;
-            WorkerParam wp = new WorkerParam(searchString.Text, searchLocation.SelectedItem
+            string search = $"*{searchString.Text}*";
+            string path = searchLocation.SelectedItem
                 .ToString()
-                .Replace("System.Windows.Controls.ComboBoxItem: ", ""));
-            //if (!worker.IsBusy) worker.RunWorkerAsync(wp);
-            Boop.Text = $"Выполняется поиск в {wp.sourcePath} по запросу: {searchString.Text}...";
-            pbStatus.IsIndeterminate = true;
+                .Replace("System.Windows.Controls.ComboBoxItem: ", "");
 
-        }
-
-        private void SearchCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            dataGrid.ItemsSource = aboutAll;
-            if (dataGrid.Items.Count == 0)
-            {
-                Boop.Text = $"Упс... По вашему запросу ничего не найдено";
-                cancelSearchButton.IsEnabled = false;
-            }
-            else
-            {
-                Boop.Text = $"Поиск завершён! \n" +
-                            $"Найдено: {quantity} файлов/директорий за " +
-                            $"{stopwatch.Hours} чч" +
-                            $":{stopwatch.Minutes} мм" +
-                            $":{stopwatch.Seconds} сс" +
-                            $":{stopwatch.Milliseconds} мс";
-            }
-
-            pbStatus.IsIndeterminate = false;
-            pbStatus.Visibility = Visibility.Hidden;
-
-            if (dataGrid.Items.Count > 0)
-                dataGrid.Visibility = Visibility.Visible;
-            else
-                dataGrid.Visibility = Visibility.Collapsed;
-
-        }
-
-        private void Search(object sender, DoWorkEventArgs e)
-        {
             try
             {
-                backgroundWorkerThread = Thread.CurrentThread;
 
                 Stopwatch sp = new Stopwatch();
                 sp.Start();
-                BackgroundWorker bg = sender as BackgroundWorker;
-                WorkerParam wp = (WorkerParam)e.Argument;
-                if (!String.IsNullOrEmpty(wp.param) && !String.IsNullOrWhiteSpace(wp.param))
+
+                if (!String.IsNullOrEmpty(search) && !String.IsNullOrWhiteSpace(search))
                 {
-                    string search = $"*{wp.param}*";
-                    string path = wp.sourcePath;
 
-                    Task<List<FileInfo>> task = FileSearcher.GetFilesFastAsync(path, search);
+                    IsMainList = false;
+                    btnClick.IsEnabled = false;
+                    cancelSearchButton.IsEnabled = true;
+                    pbStatus.Visibility = Visibility.Visible;
 
-                    Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(path, search);
+                    Boop.Text = $"Выполняется поиск в {path} по запросу: {search}...";
 
-                    aboutAll = MainController.GetList(dirs.Result, task.Result);
+                    pbStatus.IsIndeterminate = true;
+ 
+                    CancellationToken tok = ctsforData.Token;
 
-                    sp.Stop();
-                    stopwatch = sp.Elapsed;
-                    quantity = aboutAll.Count;
+
+                    var b = (DataContext as IndexViewModel).LoadData(search, path, tok).ContinueWith(r =>
+                    {
+
+                        sp.Stop();
+                        stopwatch = sp.Elapsed;
+
+                        quantity = dataGrid.Items.Count;
+
+                        if (dataGrid.Items.Count == 0)
+                        {
+                            Boop.Text = $"Упс... По вашему запросу ничего не найдено";
+
+                        }
+                        else
+                        {
+                            Boop.Text = $"Поиск завершён! \n" +
+                                        $"Найдено: {quantity} файлов/директорий за " +
+                                        $"{stopwatch.Hours} чч" +
+                                        $":{stopwatch.Minutes} мм" +
+                                        $":{stopwatch.Seconds} сс" +
+                                        $":{stopwatch.Milliseconds} мс";
+                        }
+
+
+                        cancelSearchButton.IsEnabled = false;
+                        pbStatus.IsIndeterminate = false;
+                        pbStatus.Visibility = Visibility.Hidden;
+
+                        CheckDataGridItems();
+
+
+                    }, token, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+
+
                 }
                 else
                 {
@@ -316,11 +302,24 @@ namespace FileManager.v10
 
         private void CancelSearchClick(object sender, RoutedEventArgs e)
         {
-            if (backgroundWorkerThread != null) backgroundWorkerThread.Interrupt();
+
+
+            if (cts != null)
+            {
+                cts.Cancel();
+                cts.Dispose();
+                cts = null;
+
+
+                ctsforData.Cancel();
+            }
+
+
             Boop.Text = "Поиск был прерван пользователем";
             pbStatus.Visibility = Visibility.Hidden;
             btnClick.IsEnabled = true;
             cancelSearchButton.IsEnabled = false;
+
         }
 
         private void CollapseWindow(object sender, RoutedEventArgs e)
@@ -685,6 +684,7 @@ namespace FileManager.v10
         {
             WindowBlureEffect wp = new WindowBlureEffect(this, AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND);
         }
+
     }
 
 }
