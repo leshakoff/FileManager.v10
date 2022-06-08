@@ -26,57 +26,68 @@ namespace FileManager.v10
     public partial class MainWindow : Window
     {
 
-        public static CancellationTokenSource cts = new CancellationTokenSource();
+        public static CancellationTokenSource cts =
+            new CancellationTokenSource();                            // TokenSource для отмены таски,
+                                                                      // в которой ведётся поиск файлов
 
-        public CancellationTokenSource ctsforData = new CancellationTokenSource();
+        public CancellationTokenSource ctsForTaskChilds =             // TokenSource для отмены
+            new CancellationTokenSource();                            // внутренних тасков, которые  
+                                                                      // запускает таск для поиска файлов
 
-        public CancellationToken token = cts.Token;
+        public CancellationToken token = cts.Token;                   // токен для отмены таски, в которой
+                                                                      // ведётся поиск файлов. 
 
-        public TimeSpan stopwatch;                      // глобальная переменная, в которую мы можем записать
-                                                        // время, за которое осуществился поиск. 
+        bool mainWindowState = false;                                 // "переключатель" для корректной
+                                                                      // работы кнопки "развернуть" окно.
+                                                                      // По умолчанию - false;  если окно развёрнуто
+                                                                      // - true.
 
-        public long quantity;
+        public bool isMainList = false;                               
 
-        bool mainWindowState = false;                   // "переключатель" для корректной работы кнопки 
-                                                        // "развернуть" окно. По умолчанию - false; 
-                                                        // если окно развёрнуто - true.
-
-        public bool isMainList = false;
-
-        public bool IsMainList
-        {
-            get { return isMainList; }
-            set
-            {
-                isMainList = value;
-                if (isMainList) ChangeButtonsEnabled();
-                else ChangeButtonsDisabled();
-            }
-        }
-
-        public string pathForDG = "";
-
-
-        public List<FileAbout> aboutAll = new List<FileAbout>();    // временный список, в котором мы будем хранить
-                                                                    // найденные файлы/папки из BackgroundWorkera. 
+        public bool IsMainList                                        // свойство, которое указывает, 
+        {                                                             // является ли текущий список итемов
+            get { return isMainList; }                                // в датагриде основным - т.е. 
+            set                                                       // если это просто список, раскрытый из ветки
+            {                                                         // TreeView, то этот список будет считаться
+                isMainList = value;                                   // главным (isMainList = true).
+                                                                      // Если же это список, полученный из 
+                if (isMainList) ChangeButtonsEnabled();               // функции поиска, то isMainList = false; 
+                else ChangeButtonsDisabled();                         // Сделано это для того, чтобы предоставить  
+            }                                                         // для текущих файлов функционал. Если файлы 
+                                                                      // находятся не в главном списке, то с ними
+        }                                                             // всё ещё можно проделывать операции 
+                                                                      // переименования, копирования, удаления и т.д.
+                                                                      // Но создать файл уже не получится, так как 
+                                                                      // у результата поиска нет какой-то "своей" папки, 
+                                                                      // так как все найденные файлы могут находиться 
+                                                                      // в разных папках. Если же список главный, 
+                                                                      // то в текущей папке мы можем создать новый файл.
 
 
         public MainWindow()
         {
             InitializeComponent();
 
+            // заполняем TreeView
             var drives = DriveInfo.GetDrives();
             foreach (var drive in drives)
             {
                 if (drive.IsReady) this.treeView.Items.Add(new FileSystemObjectInfo(drive));
             }
 
+            // создаём модель данных, из которых
+            // мы потом будем получать текущий список для DataGrid-a
             var model = new IndexViewModel();
             DataContext = model;
 
             CheckDataGridItems();
         }
 
+        /// <summary>
+        /// Метод, предзназначенный для проверки Датагрида на итемы.
+        /// Если Датагрид не пустой, отображаем его. Если итемов нет, 
+        /// прячем. 
+        /// </summary>
         private void CheckDataGridItems()
         {
             if (dataGrid.Items.Count > 0)
@@ -175,6 +186,8 @@ namespace FileManager.v10
         {
             IsMainList = true;
 
+            string pathForDG = "";
+
             if (treeView.SelectedItem != null)
             {
                 pathForDG = (treeView.SelectedItem as FileSystemObjectInfo).FileSystemInfo.FullName;
@@ -197,6 +210,10 @@ namespace FileManager.v10
 
         private void Search(object sender, RoutedEventArgs e)
         {
+            TimeSpan stopwatch;
+            long quantity;
+
+
             string search = $"*{searchString.Text}*";
             string path = searchLocation.SelectedItem
                 .ToString()
@@ -220,10 +237,10 @@ namespace FileManager.v10
 
                     pbStatus.IsIndeterminate = true;
  
-                    CancellationToken tok = ctsforData.Token;
+                    CancellationToken tok = ctsForTaskChilds.Token;
 
 
-                    var b = (DataContext as IndexViewModel).LoadData(search, path, tok).ContinueWith(r =>
+                    (DataContext as IndexViewModel).LoadData(search, path, tok).ContinueWith(r =>
                     {
 
                         sp.Stop();
@@ -311,7 +328,7 @@ namespace FileManager.v10
                 cts = null;
 
 
-                ctsforData.Cancel();
+                ctsForTaskChilds.Cancel();
             }
 
 
