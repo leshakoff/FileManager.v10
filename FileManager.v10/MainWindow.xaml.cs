@@ -198,9 +198,6 @@ namespace FileManager.v10
                     Boop.Text = String.Empty;
                     spinnerGif.Visibility = Visibility.Collapsed;
 
-                    if (dataGrid.Items.Count == 0)
-                        Boop.Text = "Ничего не найдено.";
-
                     CheckDataGridItems();
 
                 }, TaskScheduler.FromCurrentSynchronizationContext());
@@ -211,7 +208,7 @@ namespace FileManager.v10
         private void Search(object sender, RoutedEventArgs e)
         {
             TimeSpan stopwatch;
-            long quantity;
+            //long quantity;
 
 
             string search = $"*{searchString.Text}*";
@@ -246,7 +243,7 @@ namespace FileManager.v10
                         sp.Stop();
                         stopwatch = sp.Elapsed;
 
-                        quantity = dataGrid.Items.Count;
+                        //quantity = dataGrid.Items.Count;
 
                         if (dataGrid.Items.Count == 0)
                         {
@@ -256,11 +253,10 @@ namespace FileManager.v10
                         else
                         {
                             Boop.Text = $"Поиск завершён! \n" +
-                                        $"Найдено: {quantity} файлов/директорий за " +
-                                        $"{stopwatch.Hours} чч" +
-                                        $":{stopwatch.Minutes} мм" +
-                                        $":{stopwatch.Seconds} сс" +
-                                        $":{stopwatch.Milliseconds} мс";
+                                        $" Прошло: " +
+                                        $" : {stopwatch.Minutes} мм " +
+                                        $" : {stopwatch.Seconds} сс " +
+                                        $" : {stopwatch.Milliseconds} мс ";
                         }
 
 

@@ -55,7 +55,6 @@ namespace FileManager.v10.Models
                 {
                     file.Size = MainController.GetSize(GetFileSizeSumFromDirectory(file.FullPath));
                 }
-
             }
 
             NotifyPropertyChanged("Locations");
@@ -91,12 +90,10 @@ namespace FileManager.v10.Models
             var t = Task.Factory.StartNew(() =>
             {
                 return MainController.GetList(location);
+            }).ContinueWith(t => {
+                Locations = new ObservableCollection<FileAbout>(t.Result);
             });
 
-            t.ContinueWith(t =>
-            {
-                Locations = new ObservableCollection<FileAbout>(t.Result);
-            }).ConfigureAwait(false);
 
             return t;
         }
@@ -110,13 +107,10 @@ namespace FileManager.v10.Models
                 Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(path, search);
 
                 return MainController.GetList(dirs.Result, files.Result);
-            }, token);
-
-
-            t.ContinueWith(t =>
-            {
+            }, token).ContinueWith(t => {
                 Locations = new ObservableCollection<FileAbout>(t.Result);
-            }, TaskContinuationOptions.NotOnCanceled).ConfigureAwait(false);
+            }, TaskContinuationOptions.NotOnCanceled);
+
 
             return t;
         }
