@@ -44,9 +44,9 @@ namespace FileManager.v10
             }
             catch
             {
-                MessageBox.Show("Доступ к папке защищён правами администратора!", 
-                    "Ошибка", 
-                    MessageBoxButton.OK, 
+                MessageBox.Show("Доступ к папке защищён правами администратора!",
+                    "Ошибка",
+                    MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
         }
@@ -174,8 +174,9 @@ namespace FileManager.v10
         {
             if (!File.Exists(path))
             {
-                IEnumerable<string> dirs = Directory.EnumerateDirectories(path);
+                IEnumerable<string> dirs = Directory.EnumerateDirectories(path); 
                 IEnumerable<string> files = Directory.EnumerateFiles(path);
+
 
                 foreach (var d in dirs)
                 {

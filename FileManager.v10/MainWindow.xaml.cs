@@ -208,7 +208,6 @@ namespace FileManager.v10
         private void Search(object sender, RoutedEventArgs e)
         {
             TimeSpan stopwatch;
-            //long quantity;
 
 
             string search = $"*{searchString.Text}*";
@@ -342,8 +341,7 @@ namespace FileManager.v10
 
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
-            Application app = Application.Current;
-            app.Shutdown();
+            Environment.Exit(0);
         }
 
         private void RestoreWindow(object sender, RoutedEventArgs e)
