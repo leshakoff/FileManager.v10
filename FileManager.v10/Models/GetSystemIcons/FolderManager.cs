@@ -19,9 +19,16 @@ namespace FileManager.v10
             }
             catch
             {
-                //!!!
-                throw;
+
+                return GetDummyImage();
             }
+        }
+
+        public static ImageSource GetDummyImage()
+        {
+            string psAssemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            Uri oUri = new Uri("pack://application:,,,/" + psAssemblyName + ";component/" + "Icons/question.png", UriKind.RelativeOrAbsolute);
+            return BitmapFrame.Create(oUri);
         }
 
         public static ImageSource GetImageSource(string directory, Size size, ItemState folderType)
