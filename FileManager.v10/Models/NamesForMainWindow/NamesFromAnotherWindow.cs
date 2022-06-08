@@ -5,7 +5,7 @@ using System.Text;
 namespace FileManager.v10
 {
     /// <summary>
-    /// Класс, предназначенный для передачи параметров из
+    /// Вспомогательный класс, предназначенный для передачи параметров из
     /// дополнительного окна WPF в главное. 
     /// </summary>
     public class NamesFromAnotherWindow

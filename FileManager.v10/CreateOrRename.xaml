@@ -75,7 +75,7 @@
                                 Background="Transparent"
                                 BorderBrush="White"
                                 BorderThickness="1" 
-                                Click="CloseWindow" 
+                                Click="DoneOperations" 
                                 Height="29" 
                                 Margin="12" />
                             
