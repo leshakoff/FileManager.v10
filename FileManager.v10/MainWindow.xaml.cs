@@ -29,6 +29,7 @@ namespace FileManager.v10
         public static CancellationTokenSource cts = new CancellationTokenSource();
 
         public CancellationTokenSource ctsforData = new CancellationTokenSource();
+
         public CancellationToken token = cts.Token;
 
         public TimeSpan stopwatch;                      // глобальная переменная, в которую мы можем записать
@@ -193,7 +194,6 @@ namespace FileManager.v10
             }
 
         }
-
 
         private void Search(object sender, RoutedEventArgs e)
         {
@@ -623,7 +623,10 @@ namespace FileManager.v10
 
         private void ReadFile(object sender, RoutedEventArgs e)
         {
-
+            if (dataGrid.SelectedItem != null && (dataGrid.SelectedItem as FileAbout).Extension != "Папка")
+            {
+                MainController.OpenFileWithStandartProgram((dataGrid.SelectedItem as FileAbout).FullPath);
+            }
         }
 
         private void ChangeButtonsEnabled()
@@ -637,9 +640,6 @@ namespace FileManager.v10
         private void ChangeButtonsDisabled()
         {
             createFileBtn.IsEnabled = false;
-            //deleteFileBtn.IsEnabled = false;
-            //renameFileBtn.IsEnabled = false;
-            //copyFileBtn.IsEnabled = false;
         }
 
         private void CheckElementExtension(object sender, MouseButtonEventArgs e)

@@ -20,40 +20,83 @@
 
 
     <Grid>
-
         <Grid Width="500" Height="350">
             <Border Padding="12" Panel.ZIndex="2">
-                <StackPanel HorizontalAlignment="Center">
+
+                <!-- Основной контейнер -->
+                    <StackPanel HorizontalAlignment="Center">
                     <Border HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock FontWeight="Bold" x:Name="userInput" Padding="8" FontSize="22" TextWrapping="Wrap"
+
+                        <!-- Текстблок с подсказкой, что здесь должен делать пользователь -->
+                            <TextBlock FontWeight="Bold" 
+                                   x:Name="userInput" 
+                                   Padding="8" 
+                                   FontSize="22" 
+                                   TextWrapping="Wrap"
                                    TextAlignment="Center"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"></TextBlock>
+                                   HorizontalAlignment="Center" />
                     </Border>
-                    
-                    <TextBox HorizontalContentAlignment="Center" x:Name="nameOfFile" Height="50" FontSize="18" Padding="6" 
+
+
+                    <!-- Текстбокс для переименования/создания файла/папки -->
+                    <TextBox HorizontalContentAlignment="Center" 
+                             x:Name="nameOfFile" 
+                             Height="50" 
+                             FontSize="18" 
+                             Padding="6" 
                              Foreground="White" 
                              materialDesign:TextFieldAssist.HasOutlinedTextField="True" 
-                             materialDesign:TextFieldAssist.TextFieldCornerRadius="6" Margin="12"></TextBox>
-                    <StackPanel Height="115" >
-                        <RadioButton IsChecked="True" Name="radioFile" Margin="24,4,4,4" Background="#FFF3F3F3" BorderBrush="White" >Файл</RadioButton>
-                        <RadioButton Name="radioFolder" Margin="24,4,4,4" Background="#FFF3F3F3" BorderBrush="White" >Папка</RadioButton>
+                             materialDesign:TextFieldAssist.TextFieldCornerRadius="6" Margin="12" />
+
+                    <!-- Контейнер с радиокнопками -->
+                        <StackPanel Height="115">
+                        <RadioButton IsChecked="True" 
+                                     Name="radioFile" 
+                                     Margin="24,4,4,4" 
+                                     Background="#FFF3F3F3" 
+                                     BorderBrush="White">Файл</RadioButton>
+                            
+                        <RadioButton Name="radioFolder" 
+                                     Margin="24,4,4,4" 
+                                     Background="#FFF3F3F3" 
+                                     BorderBrush="White" >Папка</RadioButton>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Button Content="Готово" Width="200" 
+
+
+                    <!-- Контейнер с кнопками "Сохранить" и "Отмена" -->
+                        <StackPanel Orientation="Horizontal" 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Center">
+                            
+                        <Button Content="Готово" 
+                                Width="200" 
                                 Foreground="White" 
-                        Background="Transparent"
-                        BorderBrush="White"
-                        BorderThickness="1" Click="CloseWindow" Height="29" Margin="12" />
-                        <Button Content="Отмена" Width="200" Foreground="White" 
-                        Background="Transparent"
-                        BorderBrush="White"
-                        BorderThickness="1" Margin="12" Click="CloseWithoutChanges" Cursor="Hand"/>
+                                Background="Transparent"
+                                BorderBrush="White"
+                                BorderThickness="1" 
+                                Click="CloseWindow" 
+                                Height="29" 
+                                Margin="12" />
+                            
+                            
+                        <Button Content="Отмена" 
+                                Width="200" 
+                                Foreground="White" 
+                                Background="Transparent"
+                                BorderBrush="White"
+                                BorderThickness="1" 
+                                Margin="12" 
+                                Click="CloseWithoutChanges" />
                     </StackPanel>
                 </StackPanel>
             </Border>
 
+
+            <!-- Прямоугольник, выполняющий роль окна -->
             <Rectangle Grid.RowSpan="2" Fill="#FF1F1F1F" RadiusX="12" RadiusY="12" Panel.ZIndex="0"/>
+            
+            
         </Grid>
     </Grid>
 

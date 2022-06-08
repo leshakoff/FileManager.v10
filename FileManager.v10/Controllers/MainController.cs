@@ -52,6 +52,30 @@ namespace FileManager.v10
         }
 
 
+        public static void OpenFileWithStandartProgram(string file)
+        {
+            try
+            {
+                if (File.Exists(file))
+                {
+                    var p = new Process();
+                    p.StartInfo = new ProcessStartInfo(file)
+                    {
+                        UseShellExecute = true
+                    };
+                    p.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Открыть файл программой по умолчанию не удалось:: {ex.Message}",
+                    "Ошибка открытия файла",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+
         /// <summary>
         /// Перегруженная версия метода GetList, которая используется для поиска файлов/папок
         /// </summary>
