@@ -5,13 +5,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager.v10"
         mc:Ignorable="d"
-        Height="200" Width="450" WindowStartupLocation="CenterScreen">
-    <StackPanel>
-        <TextBlock FontWeight="Bold" x:Name="userInput"></TextBlock>
-        <TextBox x:Name="nameOfFile" Height="30" FontSize="22"></TextBox>
-        <RadioButton IsChecked="True" Name="radioFile">Файл</RadioButton>
-        <RadioButton Name="radioFolder">Папка</RadioButton>
-        <Button Content="Готово" Click="CloseWindow" />
-        <Button Content="Отмена" Click="CloseWithoutChanges" />
-    </StackPanel>
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Height="400" Width="600" WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        MouseDown="Window_MouseDown">
+
+
+    <Grid>
+
+        <Grid Width="500" Height="350">
+            <Border Padding="12" Panel.ZIndex="2">
+                <StackPanel HorizontalAlignment="Center">
+                    <Border HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock FontWeight="Bold" x:Name="userInput" Padding="8" FontSize="22" TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"></TextBlock>
+                    </Border>
+                    
+                    <TextBox HorizontalContentAlignment="Center" x:Name="nameOfFile" Height="50" FontSize="18" Padding="6" 
+                             Foreground="White" 
+                             materialDesign:TextFieldAssist.HasOutlinedTextField="True" 
+                             materialDesign:TextFieldAssist.TextFieldCornerRadius="6" Margin="12"></TextBox>
+                    <StackPanel Height="115" >
+                        <RadioButton IsChecked="True" Name="radioFile" Margin="24,4,4,4" Background="#FFF3F3F3" BorderBrush="White" >Файл</RadioButton>
+                        <RadioButton Name="radioFolder" Margin="24,4,4,4" Background="#FFF3F3F3" BorderBrush="White" >Папка</RadioButton>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Button Content="Готово" Width="200" 
+                                Foreground="White" 
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1" Click="CloseWindow" Height="29" Margin="12" />
+                        <Button Content="Отмена" Width="200" Foreground="White" 
+                        Background="Transparent"
+                        BorderBrush="White"
+                        BorderThickness="1" Margin="12" Click="CloseWithoutChanges" Cursor="Hand"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Rectangle Grid.RowSpan="2" Fill="#FF1F1F1F" RadiusX="12" RadiusY="12" Panel.ZIndex="0"/>
+        </Grid>
+    </Grid>
+
+
+
 </Window>

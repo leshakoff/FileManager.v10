@@ -417,9 +417,9 @@ namespace FileManager.v10
                         "создать файл/папку не удалось.", "Ошибка создания файла/папки",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    MessageBox.Show($"Cоздать файл/папку не удалось. {ex.Message}", "Ошибка создания файла/папки",
+                    MessageBox.Show($"Cоздать файл/папку не удалось.", "Ошибка создания файла/папки",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
@@ -644,39 +644,13 @@ namespace FileManager.v10
 
         private void CheckElementExtension(object sender, MouseButtonEventArgs e)
         {
-            string ext = "";
-            if (dataGrid.SelectedItem != null)
+            if (dataGrid.SelectedItem != null && (dataGrid.SelectedItem as FileAbout).Extension != "Папка")
             {
-
-                ext = (dataGrid.SelectedItem as FileAbout).Extension;
-                MessageBox.Show($"Мы здесь, расширение - {ext}");
-
-                if (ext == ".txt")
-                {
-                    //readFileBtn.IsEnabled = true;
-                    //editFileBtn.IsEnabled = true;
-
-                    //playMediaFileBtn.IsEnabled = false;
-                    //pauseMediaFileBtn.IsEnabled = false;
-                    //stopMediaFileBtn.IsEnabled = false;
-                }
-                else if (ext == ".mp4")
-                {
-                    //playMediaFileBtn.IsEnabled = true;
-                    //pauseMediaFileBtn.IsEnabled = true;
-                    //stopMediaFileBtn.IsEnabled = true;
-
-                    //readFileBtn.IsEnabled = false;
-                    //editFileBtn.IsEnabled = false;
-                }
-                else
-                {
-                    //readFileBtn.IsEnabled = false;
-                    //editFileBtn.IsEnabled = false;
-                    //playMediaFileBtn.IsEnabled = false;
-                    //pauseMediaFileBtn.IsEnabled = false;
-                    //stopMediaFileBtn.IsEnabled = false;
-                }
+                readFileBtn.IsEnabled = true;
+            }
+            else
+            {
+                readFileBtn.IsEnabled = false;
             }
         }
 

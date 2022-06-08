@@ -29,18 +29,24 @@ namespace FileManager.v10
             userInput.Text = name;
             if (currentFile != null)
             {
+                radioFile.Visibility = Visibility.Hidden;
+                radioFolder.Visibility = Visibility.Hidden;
+
                 if (Object.ReferenceEquals(currentFile.GetType(), currentFileFromDataGrid.GetType()))
                 {
                     currentFileFromDataGrid = currentFile as FileAbout;
                     nameOfFile.Text = (currentFile as FileAbout).Name;
                 }
-                else 
+                else
                 {
-                    //Object.ReferenceEquals(currentFile.GetType(), currentFileFromTree.GetType())
-                    //-- выдаёт null, т.к. FileSystemObjectInfo по умолчанию null
                     currentFileFromTree = currentFile as FileSystemObjectInfo;
                     nameOfFile.Text = (currentFile as FileSystemObjectInfo).FileSystemInfo.Name;
                 }
+            }
+            else
+            {
+                radioFile.Visibility = Visibility.Visible;
+                radioFolder.Visibility = Visibility.Visible;
             }
         }
 
@@ -104,5 +110,11 @@ namespace FileManager.v10
     {
         this.Close();
     }
-}
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
+        }
+    }
 }

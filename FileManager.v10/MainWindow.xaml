@@ -15,7 +15,7 @@
         TextOptions.TextRenderingMode="Auto"
         FontFamily="{DynamicResource MaterialDesignFont}"
                        
-        Title="MainWindow" 
+        Title="FileManager" 
         Height="600" 
         Width="1000"
         WindowStyle="None"
@@ -325,7 +325,7 @@
                         BorderBrush="White"
                         BorderThickness="1"
                         Margin="26,6,24,6"
-                        ToolTip="Открыть файл соответсвующей программой"
+                        ToolTip="Открыть файл программой по умолчанию"
                         ToolTipService.ShowOnDisabled="True"
                         >
                     <materialDesign:PackIcon Kind="FolderOpenOutline" 
