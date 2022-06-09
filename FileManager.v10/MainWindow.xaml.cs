@@ -166,11 +166,19 @@ namespace FileManager.v10
 
         private void ExpandChildren(FileSystemObjectInfo mainNode, string childrenName)
         {
-            if (mainNode.Children.Count > 0)
+            try
             {
-                FileSystemObjectInfo childNode = mainNode.Children.First(x => x.FileSystemInfo.FullName == childrenName);
-                childNode.IsExpanded = true;
+                if (mainNode.Children.Count > 0)
+                {
+                    FileSystemObjectInfo childNode = mainNode.Children.First(x => x.FileSystemInfo.FullName == childrenName);
+                    childNode.IsExpanded = true;
+                }
             }
+            catch
+            {
+            
+            }
+
         }
 
         private void OpenInExplorer(object sender, MouseButtonEventArgs e)
