@@ -26,15 +26,14 @@ namespace FileManager.v10
     public partial class MainWindow : Window
     {
 
-        public static CancellationTokenSource cts =
-            new CancellationTokenSource();                            // TokenSource для отмены таски,
-                                                                      // в которой ведётся поиск файлов
+        public static CancellationTokenSource cts = null;                         // TokenSource для отмены таски,
+                                                                                  // в которой ведётся поиск файлов
 
-        public CancellationTokenSource ctsForTaskChilds =             // TokenSource для отмены
-            new CancellationTokenSource();                            // внутренних тасков, которые  
+        public CancellationTokenSource ctsForTaskChilds = null;             // TokenSource для отмены
+                                      // внутренних тасков, которые  
                                                                       // запускает таск для поиска файлов
 
-        public CancellationToken token = cts.Token;                   // токен для отмены таски, в которой
+        public CancellationToken token;                   // токен для отмены таски, в которой
                                                                       // ведётся поиск файлов. 
 
         bool mainWindowState = false;                                 // "переключатель" для корректной
@@ -218,6 +217,10 @@ namespace FileManager.v10
             TimeSpan stopwatch;
 
 
+            cts = new CancellationTokenSource();
+            ctsForTaskChilds = new CancellationTokenSource();
+            token = cts.Token;
+
             string search = $"*{searchString.Text}*";
             string path = searchLocation.SelectedItem
                 .ToString()
@@ -249,8 +252,6 @@ namespace FileManager.v10
 
                         sp.Stop();
                         stopwatch = sp.Elapsed;
-
-                        //quantity = dataGrid.Items.Count;
 
                         if (dataGrid.Items.Count == 0)
                         {
@@ -322,18 +323,16 @@ namespace FileManager.v10
 
         private void CancelSearchClick(object sender, RoutedEventArgs e)
         {
-
-
             if (cts != null)
             {
                 cts.Cancel();
                 cts.Dispose();
                 cts = null;
 
-
                 ctsForTaskChilds.Cancel();
+                ctsForTaskChilds.Dispose();
+                ctsForTaskChilds = null;
             }
-
 
             Boop.Text = "Поиск был прерван пользователем";
             pbStatus.Visibility = Visibility.Hidden;

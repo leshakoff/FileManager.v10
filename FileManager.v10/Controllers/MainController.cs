@@ -154,7 +154,7 @@ namespace FileManager.v10
                         FullPath = di.FullName,
                         Image = FolderManager.GetImageSource(di.FullName, ShellManager.ItemState.Close)
                     };
-                    //allFilesAndDirectories.Add(fi);
+                    
                     data = fi;
                     fi.Image.Freeze();
                     return true;
@@ -162,6 +162,7 @@ namespace FileManager.v10
             }
             catch (Exception ex)
             {
+                MessageBox.Show("Доступ к папке запрещён!");
                 Debug.WriteLine($"ERROR to get directory info for {d}. Exception: {ex}");
             }
 
@@ -174,38 +175,23 @@ namespace FileManager.v10
         {
             if (!File.Exists(path))
             {
-                IEnumerable<string> dirs = Directory.EnumerateDirectories(path); 
-                IEnumerable<string> files = Directory.EnumerateFiles(path);
-
-
-                foreach (var d in dirs)
+                if (IOHelper.TryEnumerateDiretory(path, out IEnumerable<string> dirEnumerable))
                 {
-
-                    if (TryGetDirectoryData(d, out var data))
-                        yield return data;
+                    foreach (var d in dirEnumerable)
+                    {
+                        if (TryGetDirectoryData(d, out var data))
+                            yield return data;
+                    }
                 }
 
-                foreach (var f in files)
+
+                if (IOHelper.TryEnumerateFiles(path, out IEnumerable<string> filesEnumerable))
                 {
-                    FileInfo fi = new FileInfo(f);
-                    if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
-                        !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
+                    foreach (var d in filesEnumerable)
                     {
-
-                        FileAbout fiAbout = new FileAbout
-                        {
-                            Name = fi.Name,
-                            CreationTime = fi.CreationTime,
-                            Extension = fi.Extension,
-                            LastWrite = fi.LastWriteTime,
-                            Size = GetSize(fi.Length),
-                            FullPath = fi.FullName,
-                            Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
-                        };
-                        fiAbout.Image.Freeze();
-                        yield return fiAbout;
+                        if (TryGeFileData(d, out FileAbout data))
+                            yield return data;
                     }
-
                 }
 
             }
@@ -233,6 +219,37 @@ namespace FileManager.v10
 
             }
 
+        }
+
+        private static bool TryGeFileData(string f, out FileAbout data)
+        {
+            try
+            {
+                FileInfo fi = new FileInfo(f);
+                if (!object.Equals((fi.Attributes & FileAttributes.System), FileAttributes.System) &&
+                    !object.Equals((fi.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
+                {
+                    data = new FileAbout
+                    {
+                        Name = fi.Name,
+                        CreationTime = fi.CreationTime,
+                        Extension = fi.Extension,
+                        LastWrite = fi.LastWriteTime,
+                        Size = GetSize(fi.Length),
+                        FullPath = fi.FullName,
+                        Image = FileManager.v10.Models.FileManager.GetImageSource(fi.FullName)
+                    };
+                    data.Image.Freeze();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Доступ к папке запрещён!");
+            }
+
+            data = null;
+            return false;
         }
 
 

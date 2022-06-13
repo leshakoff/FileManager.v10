@@ -90,16 +90,17 @@ namespace FileManager.v10.Models
             var t = Task.Factory.StartNew(() =>
             {
                 return MainController.GetList(location);
-            }).ContinueWith(t => {
+            }).ContinueWith(t =>
+            {
                 Locations = new ObservableCollection<FileAbout>(t.Result);
             });
-
 
             return t;
         }
 
         public Task LoadData(string search, string path, CancellationToken token)
         {
+
             var t = Task.Factory.StartNew(() =>
             {
                 Task<List<FileInfo>> files = FileSearcher.GetFilesFastAsync(path, search);
@@ -107,12 +108,13 @@ namespace FileManager.v10.Models
                 Task<List<DirectoryInfo>> dirs = DirectorySearcher.GetDirectoriesFastAsync(path, search);
 
                 return MainController.GetList(dirs.Result, files.Result);
-            }, token).ContinueWith(t => {
+            }, token).ContinueWith(t =>
+            {
                 Locations = new ObservableCollection<FileAbout>(t.Result);
             }, TaskContinuationOptions.NotOnCanceled);
 
-
             return t;
+
         }
 
         private void NotifyPropertyChanged([CallerMemberName] string member = "")
